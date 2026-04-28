@@ -727,5 +727,30 @@ public class TypingGUI
         stylesInfo.setWrapStyleWord(true);
         stylesInfo.setEditable(false);
         customisationPanel.add(stylesInfo);
+
+        styleOption.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                if (styleOption.getSelectedItem().toString().equals("Touch Typist"))
+                {
+                    stylesInfo.setText("+ no change accuracy rating; " + "+0.05 burnout risk");
+                }
+                else if (styleOption.getSelectedItem().toString().equals("Hunt & Peck"))
+                {
+                    stylesInfo.setText("+" + "0.2" + " accuracy rating; " + "+0.06 burnout risk");
+                }
+                else if (styleOption.getSelectedItem().toString().equals("Phone Thumbs"))
+                {
+                    
+                    stylesInfo.setText("-" + "0.2" + " accuracy rating; " + "+0.02 burnout risk");
+                }
+                else
+                {
+                    
+                    stylesInfo.setText("+" + "0.5" + " accuracy rating; " + "+0.09 burnout risk");
+                }
+            }
+        });
     }
 }
