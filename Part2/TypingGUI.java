@@ -1,5 +1,11 @@
 import java.util.concurrent.TimeUnit;
+
 import java.lang.Math;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+
+import javax.swing.*;
 
 /**
  * A typing race simulation. Three typists race to complete a passage of text,
@@ -15,6 +21,10 @@ import java.lang.Math;
 public class TypingGUI
 {
     private int passageLength;   // Total characters in the passage to type
+
+    private static CardLayout layout; // Allows flipping through each page/section of GUI
+    private static JPanel card;
+
     private Typist seat1Typist;
     private Typist seat2Typist;
     private Typist seat3Typist;
@@ -340,11 +350,29 @@ public class TypingGUI
         }
     }
 
+    /**
+     * The main method that creates the GUI of the TypingRace
+     * Creates main menu and customisation page.
+     * Pages that user have to select options to set up the race
+     */
     public static void main(String[] args) {
-        TypingRace race = new TypingRace(40);
-        race.addTypist(new Typist('①', "TURBOFINGERS", 0.85), 1);
-        race.addTypist(new Typist('②', "QWERTY_QUEEN",  0.60), 2);
-        race.addTypist(new Typist('③', "HUNT_N_PECK",   0.30), 3);
-        race.startRace();
+        JFrame frame = new JFrame("TypingRace");
+        layout = new CardLayout();
+        card = new JPanel(layout);
+
+        JLabel gameName = new JLabel("TYPING RACE");
+        gameName.setBounds(282, 5, 148, 29);
+        gameName.setFont(new Font("Arial", Font.BOLD, 20));
+        gameName.setForeground(Color.decode("#f3753f"));
+
+        frame.add(gameName, BorderLayout.NORTH);
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(667, 400);
+
+        //Main Menu
+        JPanel mainPanel = new JPanel();
+        mainPanel.setBackground(Color.decode("#eeeeee"));
+        mainPanel.setLayout(null);
     }
 }
