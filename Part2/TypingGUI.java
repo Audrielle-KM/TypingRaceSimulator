@@ -20,24 +20,25 @@ import javax.swing.*;
  */
 public class TypingGUI
 {
-    private static int passageLength;   // Total characters in the passage to type
+     private static int passageLength;   // Total characters in the passage to type
 
     private static CardLayout layout; // Allows flipping through each page/section of GUI
     private static JPanel card;
-    private static ArrayList<Typist2> typists = new ArrayList<>();
     private static ArrayList<JTextArea> bars = new ArrayList<>();
     private static ArrayList<JTextArea> typiststatus = new ArrayList<>();
-
+    private static ArrayList<Typist2> typists = new ArrayList<>();
+    private static ArrayList<Typist2> rankedtypists = new ArrayList<>();
+    private static ArrayList<Typist2> winnerHistory = new ArrayList<>();
     private static int numberOfTypists = 0;
     private static Typist2 winnerTypist;
 
-    // Accuracy thresholds for mistype and burnout events
+    // Original accuracy thresholds for mistype and burnout events
     private static final double MISTYPE_BASE_CHANCE = 0.3;
     private static final int    SLIDE_BACK_AMOUNT   = 2;
     private static final int    BURNOUT_DURATION     = 3;
     //Wait 200ms between turns so the animation is visible
     private static final int SPEED = 200;
-
+    
     // difficulty modifier and attribute impact values for mistype and burnout events
     private static final double NIGHT_SHIFT_ACCURACY = 0.2;
     private static final int CAFFEINE_SPEED_BOOST = 50;
@@ -53,7 +54,7 @@ public class TypingGUI
     private static int NEW_SPEED = SPEED;
     private static int caffeineTurns = 0;
 
-    // Dropdown list that holds values for passagelength & number of seats
+    // Dropdown list that holds values for passagelength, number of seats, typing style, keyboard type and symbols
     static JComboBox<String> lengthOption;
     static JComboBox<Integer> seatsOption;
     static JComboBox<String> styleOption;
@@ -437,27 +438,6 @@ public class TypingGUI
     }
 
     /**
-     * Chaning the components(buttons) background when it's clicked
-     * 
-     * @param button the modified button
-     * @param onClickColour the colour when button is clicked
-     * @param BackColour the original colour of the button
-     */
-    public static void setOnClickColour(JComponent button, Color onClickColour, Color BackColour)
-    {
-        button.setOpaque(true);
-        button.addMouseListener(new MouseAdapter() {
-            public void mouseClick(MouseEvent e){
-                button.setBackground(onClickColour);
-            }
-
-            public void mouseReleased(MouseEvent e){
-                button.setBackground(BackColour);
-            }
-        });
-    }
-
-    /**
      * Creates a single typist's lane of the finished race
      * 
      * @param race a snapshot of the race
@@ -644,6 +624,226 @@ public class TypingGUI
     }
 
     /**
+     * Creates a row to represent a typist's details and performance for the leaderboard
+     * 
+     * Background color of Gold for 1st place, Silver for 2nd place, Bronze for 3rd place
+     * Consists of 8 columns, rank no., badges achieved, typist name, total points, final accuracy, accuracy %, burnouts, personal best WPM, WPM from the race)
+     * @return the created row
+    */
+    private static JPanel leaderboardRowCreate(Typist2 theTypist)
+    {
+        JPanel row = new JPanel(new GridLayout(1,8));
+        row.setPreferredSize(new Dimension(220,40));
+        
+        if (rankedtypists.indexOf(theTypist) == 0)
+        {
+            row.setBackground(Color.decode("#bca45b"));
+        }
+        else if (rankedtypists.indexOf(theTypist) == 1)
+        {
+            row.setBackground(Color.decode("#7d7d7d"));
+        }
+        else if (rankedtypists.indexOf(theTypist) == 2)
+        {
+            row.setBackground(Color.decode("#a27e64"));
+        }
+        else
+        {
+            row.setBackground(Color.decode("#1c1c1c"));   
+        }
+
+        JLabel rank = new JLabel();
+        rank.setText(Integer.toString(rankedtypists.indexOf(theTypist) + 1));
+        rank.setForeground(Color.decode("#D9D9D9"));
+        rank.setPreferredSize(new Dimension(2,40));
+        row.add(rank);
+        JLabel badge = new JLabel();
+        if (theTypist.getBadges().isEmpty()) {
+            badge.setText("N/A"); }
+        else {
+            badge.setText(theTypist.getBadges().toString());
+        }
+        badge.setForeground(Color.decode("#D9D9D9"));
+        badge.setPreferredSize(new Dimension(5,40));
+        row.add(badge);
+        if (theTypist.getName().equals("N/A"))
+        {
+            JTextArea name = new JTextArea(String.valueOf(theTypist.getSymbol()));
+            name.setForeground(Color.decode("#ffffff"));
+            name.setPreferredSize(new Dimension(8,40));
+            name.setWrapStyleWord(true);
+            name.setLineWrap(true);
+            name.setEditable(false);
+            name.setOpaque(false);
+            row.add(name);
+        }
+        else {
+            JTextArea name = new JTextArea(theTypist.getName());
+            name.setForeground(Color.decode("#ffffff"));
+            name.setPreferredSize(new Dimension(8,40));
+            name.setWrapStyleWord(true);
+            name.setLineWrap(true);
+            name.setEditable(false);
+            name.setOpaque(false);
+            row.add(name);
+        }
+        JTextArea points = new JTextArea(Integer.toString(theTypist.getPoints()));
+        points.setForeground(Color.decode("#ffffff"));
+        points.setPreferredSize(new Dimension(8,40));
+        points.setWrapStyleWord(true);
+        points.setLineWrap(true);
+        points.setEditable(false);
+        points.setOpaque(false);
+        row.add(points);
+        JTextArea accuracy = new JTextArea(String.valueOf(theTypist.getAccuracy()) + " (Improved from: " + theTypist.getOldAccuracy() + ")");
+        accuracy.setForeground(Color.decode("#ffffff"));
+        accuracy.setFont(new Font("Arial", Font.PLAIN,  7));
+        accuracy.setPreferredSize(new Dimension(8,40));
+        accuracy.setWrapStyleWord(true);
+        accuracy.setLineWrap(true);
+        accuracy.setEditable(false);
+        accuracy.setOpaque(false);
+        row.add(accuracy);
+        JTextArea burnouts = new JTextArea(String.valueOf(theTypist.getBurnoutsCount()));
+        burnouts.setForeground(Color.decode("#ffffff"));
+        burnouts.setPreferredSize(new Dimension(8,40));
+        burnouts.setWrapStyleWord(true);
+        burnouts.setLineWrap(true);
+        burnouts.setEditable(false);
+        burnouts.setOpaque(false);
+        row.add(burnouts);
+        JTextArea WPM = new JTextArea(String.valueOf(theTypist.getfinalWPM(finishTime, startTime)));
+        WPM.setForeground(Color.decode("#ffffff"));
+        WPM.setPreferredSize(new Dimension(8,40));
+        WPM.setWrapStyleWord(true);
+        WPM.setLineWrap(true);
+        WPM.setEditable(false);
+        WPM.setOpaque(false);
+        row.add(WPM);
+        JTextArea personalBest = new JTextArea(String.valueOf(theTypist.getPersonalBest()));
+        personalBest.setForeground(Color.decode("#D9D9D9"));
+        personalBest.setPreferredSize(new Dimension(8,40));
+        personalBest.setWrapStyleWord(true);
+        personalBest.setLineWrap(true);
+        personalBest.setEditable(false);
+        personalBest.setOpaque(false);
+        row.add(personalBest);
+        JTextArea accuracypercentage = new JTextArea(String.valueOf(theTypist.getAccuracyPercentage()));
+        accuracypercentage.setForeground(Color.decode("#D9D9D9"));
+        accuracypercentage.setPreferredSize(new Dimension(8,40));
+        accuracypercentage.setWrapStyleWord(true);
+        accuracypercentage.setLineWrap(true);
+        accuracypercentage.setEditable(false);
+        accuracypercentage.setOpaque(false);
+        row.add(accuracypercentage);
+
+        return row;
+    }
+
+    /**
+     * Chaning the components(buttons) background when it's clicked
+     * 
+     * @param button the modified button
+     * @param onClickColour the colour when button is clicked
+     * @param BackColour the original colour of the button
+     */
+    public static void setOnClickColour(JComponent button, Color onClickColour, Color BackColour)
+    {
+        button.setOpaque(true);
+        button.addMouseListener(new MouseAdapter() {
+            public void mouseClick(MouseEvent e){
+                button.setBackground(onClickColour);
+            }
+
+            public void mouseReleased(MouseEvent e){
+                button.setBackground(BackColour);
+            }
+        });
+    }
+
+    /**
+     * Creates the row of the headings for the leaderboard, ranks, badge etc.
+     * @return the created row
+     */
+    private static JPanel leaderboardRowHeadings()
+    {
+        JPanel row = new JPanel(new GridLayout(1,8));
+        row.setSize(220,40);
+        
+        JLabel rank = new JLabel();
+        rank.setText("Rank");
+        rank.setForeground(Color.decode("#000000"));
+        rank.setPreferredSize(new Dimension(2,40));
+        row.add(rank);
+        JLabel badge = new JLabel();
+        badge.setText("Badge");
+        badge.setForeground(Color.decode("#000000"));
+        badge.setPreferredSize(new Dimension(5,40));
+        row.add(badge);
+        JTextArea name = new JTextArea("Name");
+        name.setForeground(Color.decode("#000000"));
+        name.setPreferredSize(new Dimension(8,40));
+        name.setWrapStyleWord(true);
+        name.setLineWrap(true);
+        name.setEditable(false);
+        name.setOpaque(false);
+        row.add(name);
+        JTextArea points = new JTextArea("Points");
+        points.setForeground(Color.decode("#000000"));
+        points.setPreferredSize(new Dimension(8,40));
+        points.setWrapStyleWord(true);
+        points.setLineWrap(true);
+        points.setEditable(false);
+        points.setOpaque(false);
+        row.add(points);
+        JTextArea accuracy = new JTextArea("Final Accuracy");
+        accuracy.setForeground(Color.decode("#000000"));
+        accuracy.setPreferredSize(new Dimension(8,40));
+        accuracy.setFont(new Font("Arial", Font.PLAIN,  10));
+        accuracy.setWrapStyleWord(true);
+        accuracy.setLineWrap(true);
+        accuracy.setEditable(false);
+        accuracy.setOpaque(false);
+        row.add(accuracy);
+        JTextArea burnouts = new JTextArea("Burnouts");
+        burnouts.setForeground(Color.decode("#000000"));
+        burnouts.setPreferredSize(new Dimension(8,40));
+        burnouts.setFont(new Font("Arial", Font.PLAIN,  8));
+        burnouts.setWrapStyleWord(true);
+        burnouts.setLineWrap(true);
+        burnouts.setEditable(false);
+        burnouts.setOpaque(false);
+        row.add(burnouts);
+        JTextArea WPM = new JTextArea("WPM");
+        WPM.setForeground(Color.decode("#000000"));
+        WPM.setPreferredSize(new Dimension(8,40));
+        WPM.setWrapStyleWord(true);
+        WPM.setLineWrap(true);
+        WPM.setEditable(false);
+        WPM.setOpaque(false);
+        row.add(WPM);
+        JTextArea personalBest = new JTextArea("Best WPM");
+        personalBest.setForeground(Color.decode("#000000"));
+        personalBest.setPreferredSize(new Dimension(8,40));
+        personalBest.setWrapStyleWord(true);
+        personalBest.setLineWrap(true);
+        personalBest.setEditable(false);
+        personalBest.setOpaque(false);
+        row.add(personalBest);
+        JTextArea accuracypercentage = new JTextArea("%Accuracy");
+        accuracypercentage.setForeground(Color.decode("#000000"));
+        accuracypercentage.setFont(new Font("Arial", Font.PLAIN,  8));
+        accuracypercentage.setPreferredSize(new Dimension(8,40));
+        accuracypercentage.setWrapStyleWord(true);
+        accuracypercentage.setLineWrap(true);
+        accuracypercentage.setEditable(false);
+        accuracypercentage.setOpaque(false);
+        row.add(accuracypercentage);
+
+        return row;
+    }
+
+    /**
      * Returns true if the given typist has completed the full passage.
      * Creates history page for the GUI as a display of the full race history/trends over time.
      * Also creates the leaderboard page to show comparison view of all typists on a chosen metric (After each race, track cumulative points across races and maintain global leaderboard)
@@ -746,6 +946,25 @@ public class TypingGUI
                 JPanel leaderboard = new JPanel();
                 leaderboard.setBackground(Color.decode("#373737"));
                 leaderboard.setLayout(new GridLayout(0,1));
+
+                leaderboard.add(leaderboardRowHeadings());
+                for (Typist2 typist : rankedtypists)
+                {
+                    leaderboard.add(leaderboardRowCreate(typist));
+
+                    if (typist.getRacesCompleted() >= 5 && typist.getTotalBurnouts() == 0)
+                    {
+                        if (!typist.getBadges().contains("☝"))
+                        {
+                            typist.addBadge("☝");
+                        }
+                    }
+
+                    if (typist.getWins() >= 10 && !typist.getBadges().contains("☠"))
+                    {
+                        typist.addBadge("☠");
+                    }
+                }
 
                 JScrollPane scroll = new JScrollPane(leaderboard);
                 scroll.setBounds(174, 69, 417, 220);
