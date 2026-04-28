@@ -75,6 +75,8 @@ public class TypingGUI
     static JButton energyDrinkButton;
     static JButton noiseCHButton;
 
+    static JSlider slider; // Race history slider per frame
+
     //Match timer
     static Timer time;
     static long startTime; // stores starting time
@@ -456,21 +458,111 @@ public class TypingGUI
     }
 
     /**
+     * Creating and updating the lanes for each typist to display full race history over time
+     * 
+     * @param index the given time the user wants to view from the race
+     * @param historyPanel the GUI history page
+     */
+    public static void ReplaySystem(int index, JPanel historyPanel)
+    {
+        if (historyPanel.getComponentCount() == 0) //if page is empty
+        {
+            for (int i = 0; i < typists.size(); i++)
+            {
+                Typist2 theTypist = typists.get(i);
+                //JTextArea bar = bars.get(i);
+
+                RaceHistory race = theTypist.getHistory().get(index);
+                
+            }
+        }
+        else // if page is set up already
+        {
+            for (int i = 0; i < typists.size(); i++)
+            {
+                Typist2 theTypist = typists.get(i);
+                //JTextArea bar = bars.get(i);
+
+                RaceHistory race = theTypist.getHistory().get(index);
+                
+            }
+        }
+
+    }
+
+    /**
      * Returns true if the given typist has completed the full passage.
+     * Creates history page for the GUI as a display of the full race history/trends over time.
+     * Also creates the leaderboard page to show comparison view of all typists on a chosen metric (After each race, track cumulative points across races and maintain global leaderboard)
      *
      * @param theTypist the typist to check
      * @return true if their progress has reached or passed the passage length
      */
-    private static boolean raceFinishedBy(Typist2 theTypist)
+    private static void raceFinishedBy(Typist2 theTypist)
     {
-        if (theTypist.getProgress() >= passageLength) //(FIXED) progress can overshoot so set to '>='
+        if (theTypist.getProgress() >= passageLength) 
         {
             winnerTypist = theTypist; // assigns value to typist who won
-            return true;
-        }
-        else
-        {
-            return false;
+            winnerTypist = theTypist; // assigns value to typist who won
+            winnerTypist.gainWins();
+            finishTime = System.currentTimeMillis();
+            finished = true;
+            System.out.println(winnerTypist.getName());
+
+
+            //Comparison/Replay View
+            JPanel historyPanel = new JPanel(layout);
+            historyPanel.setBackground(Color.decode("#eeeeee"));
+            historyPanel.setLayout(new BoxLayout(historyPanel, BoxLayout.Y_AXIS));
+            historyPanel.setBorder(BorderFactory.createEmptyBorder(0,0,1,0));
+           
+
+            JPanel historyslider = new JPanel();
+            JTextArea viewText = new JTextArea("Race History: ");
+            viewText.setBounds(0, 40, 147, 21);
+            viewText.setFont(new Font("Arial", Font.BOLD,  14));
+            viewText.setForeground(Color.decode("#434343"));
+            historyslider.add(viewText);
+
+            slider = new JSlider();
+            slider.setMaximum((winnerTypist.getHistory().size() - 1));
+            slider.setValue(0);
+            slider.setMajorTickSpacing(1);
+            slider.setPaintTicks(true);
+            slider.setSnapToTicks(true);
+            slider.setBounds(40, 40, 106, 30);
+            slider.setForeground(Color.decode("#52e3a4"));
+            historyslider.add(slider);
+
+            historyPanel.add(historyslider);
+
+            JPanel replayBars = new JPanel(layout);
+            replayBars.setBackground(Color.decode("#eeeeee"));
+            replayBars.setLayout(new BoxLayout(replayBars, BoxLayout.Y_AXIS));
+            replayBars.setBorder(BorderFactory.createEmptyBorder(0,0,1,0));
+            historyPanel.add(replayBars);
+
+            ReplaySystem(0, replayBars);
+
+            slider.addChangeListener(e->{
+                int value = slider.getValue();
+                slider.setValue(value);
+
+                //replayBars.removeAll();
+                ReplaySystem(value, replayBars);
+            });
+
+            JButton continueButton = new JButton("Leaderboard>>");
+            continueButton.setBounds(86, 280, 106, 30);
+            continueButton.setBackground(Color.decode("#ffffff"));
+            continueButton.setForeground(Color.decode("#1b1b1b"));
+            continueButton.setFont(new Font("Arial", Font.PLAIN, 14));
+            continueButton.setFocusPainted(false);
+            replayBars.add(continueButton);
+
+            card.add(historyPanel, "history");
+            
+            layout.show(card, "history");
         }
     }
 

@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * The Typist Class is designed to represent an object(in this case, a competitor/typist) 
  * and contains private fields, a constructor, getter and setter methods. 
@@ -27,9 +29,13 @@ public class Typist2
     private boolean burntOutState; // tracks if typist is burnt out or not
     private int burnOutTurnsRemaining = 0; // number of turns of burnout remaining
 
+    private int totalwins = 0;
+
     private int progressBeforeSlideBack = 0; // typist's progress before slideback
     private double oldAccuracy = 0; // records typist initial accuaracy before game starts
     private boolean gotBurntOut = false; //(if typist ever burns out in game; when game is over, this value helps determine if typist loses accuracy)
+
+    private ArrayList<RaceHistory> history = new ArrayList<>(); // history list that stores each frame of the race
 
     // Constructor of class Typist
     /**
@@ -68,6 +74,16 @@ public class Typist2
     }
 
     /**
+     * stores typist's full race history (pos, WPM, accuracy, burnout, accuracy percentage)
+     * 
+     * @param race a snapshot of a race
+     */
+    public void addHistory(RaceHistory race)
+    {
+        history.add(race);
+    }
+
+    /**
      * Reduces the remaining burnout counter by one turn.
      * When the counter reaches zero, the typist recovers automatically.
      * Has no effect if the typist is not currently burnt out.
@@ -101,6 +117,16 @@ public class Typist2
     public double getOldAccuracy()
     {
         return oldAccuracy;
+    }
+
+    /**
+     * Returns the typist's full race history
+     * 
+     * @return typist's history array list
+     */
+    public ArrayList<RaceHistory> getHistory()
+    {
+        return history;
     }
 
     /**
@@ -167,6 +193,16 @@ public class Typist2
     }
 
     /**
+     * Returns the number of wins typist has achieved.
+     *
+     * @return the typist's number of wins
+     */
+    public int getWins() //accessor
+    {
+       return totalwins;
+    }
+
+    /**
      * Resets the typist to their initial state, ready for a new race.
      * Progress returns to zero, burnout is cleared entirely.
      */
@@ -178,6 +214,9 @@ public class Typist2
         burntOutState = false;
         burnOutTurnsRemaining = 0;
         gotBurntOut = false;
+
+        history.clear();
+        oldAccuracy = typistAccuracy;
     }
 
     /**
@@ -283,6 +322,15 @@ public class Typist2
     {
         typistName = newName;
 
+    }
+
+    /**
+     * Adds to typist's number of wins
+     *
+     */
+    public void gainWins()
+    {
+        totalwins++;
     }
 
 }
