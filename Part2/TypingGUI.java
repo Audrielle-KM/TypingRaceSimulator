@@ -413,5 +413,23 @@ public class TypingGUI
         customLengthTextField.setVisible(false);
         customLengthTextField.setEditable(false);
         mainPanel.add(customLengthTextField);
+
+        customLengthTextField.addFocusListener(new FocusAdapter() { // sets Placeholder text
+            public void onFocus(FocusEvent e){
+                if (customLengthTextField.getText().equals("(5-50)"))
+                    {
+                        customLengthTextField.setText("");
+                        customLengthTextField.setText("");
+                        customLengthTextField.setForeground(Color.BLACK);
+                    }
+                }
+            public void outFocus(FocusEvent e){
+            if (customLengthTextField.getText().isEmpty())
+                {
+                    customLengthTextField.setText("(5-50)");
+                    customLengthTextField.setForeground(Color.GRAY);
+                }
+            }
+        });
     }
 }
