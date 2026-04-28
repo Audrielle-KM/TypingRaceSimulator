@@ -36,6 +36,14 @@ public class TypingGUI
     private static final int    SLIDE_BACK_AMOUNT   = 2;
     private static final int    BURNOUT_DURATION     = 3;
 
+    // Dropdown list that holds values for passagelength & number of seats
+    static JComboBox<String> lengthOption;
+    static JComboBox<Integer> seatsOption;
+
+    // GUI components that text values will be used across the program
+    static JLabel selectedLength;
+    static JLabel numberOfSeatsText;
+
     /**
      * Constructor for objects of class TypingRace.
      * Sets up the race with a passage of the given length.
@@ -374,5 +382,36 @@ public class TypingGUI
         JPanel mainPanel = new JPanel();
         mainPanel.setBackground(Color.decode("#eeeeee"));
         mainPanel.setLayout(null);
+
+        JLabel mainMenuText = new JLabel("Main Menu");
+        mainMenuText.setBounds(303, 31, 106, 30);
+        mainMenuText.setFont(new Font("Arial", Font.ITALIC, 18));
+        mainMenuText.setForeground(Color.decode("#ff7146"));
+        mainPanel.add(mainMenuText);
+
+        JLabel selectPassageLengthText = new JLabel("Select Passage Length:");
+        selectPassageLengthText.setBounds(35, 71, 160, 21);
+        selectPassageLengthText.setFont(new Font("Arial", Font.PLAIN, 14));
+        selectPassageLengthText.setForeground(Color.decode("#1b1b1b"));
+        mainPanel.add(selectPassageLengthText);
+
+        String options[] = {"Short", "Medium", "Long", "Custom"};
+        lengthOption = new JComboBox<String>(options);
+        lengthOption.setBounds(35, 71, 160, 21);
+        lengthOption.setLocation(35,111);
+        mainPanel.add(lengthOption);
+
+        selectedLength = new JLabel(lengthOption.getSelectedItem().toString() + "🗸");
+        selectedLength.setBounds(201, 111, 106, 16);
+        selectedLength.setForeground(Color.decode("#1b1b1b"));
+        mainPanel.add(selectedLength);
+
+        JTextField customLengthTextField = new JTextField("(5-50)");
+        customLengthTextField.setBounds(90, 137, 94, 24);
+        customLengthTextField.setBackground(Color.decode("#ffffff"));
+        customLengthTextField.setForeground(Color.GRAY);
+        customLengthTextField.setVisible(false);
+        customLengthTextField.setEditable(false);
+        mainPanel.add(customLengthTextField);
     }
 }
