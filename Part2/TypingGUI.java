@@ -696,6 +696,70 @@ public class TypingGUI
         
         return row;
     }
+     /**
+     * Creates a panel/row for race page to show the passage length and symbols to represent when a typist is burnt out or has just mistyped
+     * ◌ (dotted cirecle) = burnt out and ◍ (circle with lines pattern inside) = just mistyped
+     * @return the row of race details
+     */
+    public static JPanel SymbolDetails()
+    {
+        JPanel row = new JPanel();
+        JTextArea lengthInfo = new JTextArea("passage length: " + passageLength + " chars ");
+        lengthInfo.setBounds(0, 0, 106, 30);
+        lengthInfo.setFont(new Font("Arial", Font.BOLD, 18));
+        lengthInfo.setForeground(Color.decode("#ff7146"));
+        row.add(lengthInfo);
+
+        JTextArea symbolInfo = new JTextArea(" [◌] = burnt out    [◍] = just mistyped");
+        symbolInfo.setBounds(30, 0, 106, 30);
+        symbolInfo.setForeground(Color.decode("#ff7146"));
+        row.add(symbolInfo);
+
+        return row;
+    }
+
+    /**
+     * Creates the row of applied difficulty modifiers
+     * @return the row
+     */
+    public static JPanel ModifiersDetails()
+    {
+        JPanel row = new JPanel();
+
+        JTextArea difficultyModifiersText = new JTextArea("Difficulty Modifiers");
+        difficultyModifiersText.setBounds(0, 25, 147, 21);
+        difficultyModifiersText.setFont(new Font("Arial", Font.BOLD,  14));
+        difficultyModifiersText.setForeground(Color.decode("#434343"));
+        row.add(difficultyModifiersText);
+
+        JTextArea modifiers = new JTextArea("Autocorrect: " + autocorrectButton.getText() + " " + "Caffeine Mode: " + caffeineButton.getText() + " " + "Night Shift: " + nightShiftButton.getText());
+        modifiers.setBounds(30, 0, 106, 30);
+        modifiers.setForeground(Color.decode("#535353"));
+        row.add(modifiers);
+
+        return row;
+    }
+
+    /**
+     * Creates the row of applied accessories
+     * @return the row
+     */
+    public static JPanel AccessoriesDetails()
+    {
+        JPanel row = new JPanel();
+
+        JTextArea accessoriesText = new JTextArea("Accessories");
+        accessoriesText.setBounds(0, 40, 147, 21);
+        accessoriesText.setFont(new Font("Arial", Font.BOLD,  14));
+        accessoriesText.setForeground(Color.decode("#434343"));
+        row.add(accessoriesText);
+
+        JTextArea accessories = new JTextArea("Wrist Support: " + wristSupportButton.getText() + " " + "Energy Drink: " + energyDrinkButton.getText() + " " + "Noise-Cancelling Headphones: " + noiseCHButton.getText());
+        accessories.setBounds(30, 40, 106, 30);
+        accessories.setForeground(Color.decode("#535353"));
+        row.add(accessories);
+        return row;
+    }
 
     /**
      * Prints a character a given number of times.
