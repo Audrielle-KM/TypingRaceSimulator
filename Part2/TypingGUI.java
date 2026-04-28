@@ -815,5 +815,30 @@ public class TypingGUI
                 }
             }
         });
+
+        JLabel typistSymbolText = new JLabel("Typists' Symbol:");
+        typistSymbolText.setBounds(197, 71, 106, 18);
+        typistSymbolText.setFont(new Font("Arial", Font.PLAIN, 14));
+        typistSymbolText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(typistSymbolText);
+
+        String symbols[] = {"①②③", "⑴⑵⑶", "⓵⓶⓷", "♠♢♣♡","♳♴♵","⚀⚁⚂"};
+        symbolOption = new JComboBox<String>(symbols);
+        symbolOption.setBounds(210, 100, 130, 21);
+        customisationPanel.add(symbolOption);
+
+        JLabel progressBarColour = new JLabel("Progress Bar Colour:");
+        progressBarColour.setBounds(197, 146, 141, 18);
+        progressBarColour.setFont(new Font("Arial", Font.PLAIN, 14));;
+        progressBarColour.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(progressBarColour);
+
+        JButton colourChangeButton = new JButton("Selected Colour: N/A");
+        colourChangeButton.setBounds(197, 180, 200, 30);
+        colourChangeButton.setBackground(Color.decode("#ffffff"));
+        colourChangeButton.setForeground(Color.decode("#1b1b1b"));
+        colourChangeButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        colourChangeButton.setFocusPainted(false);
+        customisationPanel.add(colourChangeButton);
     }
 }
