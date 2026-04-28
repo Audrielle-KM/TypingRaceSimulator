@@ -27,6 +27,7 @@ public class Typist
     private boolean burntOutState; // tracks if typist is burnt out or not
     private int burnOutTurnsRemaining = 0; // number of turns of burnout remaining
 
+    private int progressBeforeSlideBack = 0; // typist's progress before slideback
     private double oldAccuracy = 0; // records typist initial accuaracy before game starts
     private boolean gotBurntOut = false; //(if typist ever burns out in game; when game is over, this value helps determine if typist loses accuracy)
 
@@ -117,6 +118,15 @@ public class Typist
     }
 
     /**
+     * Returns the typist's progress before slideback() is called
+     * 
+     */
+    public int getProgressBeforeSlideBack() 
+    {
+        return progressBeforeSlideBack;
+    }
+
+    /**
      * Returns the name of the typist.
      *
      * @return the typist's name as a String
@@ -165,6 +175,7 @@ public class Typist
     public void resetToStart()
     {
         typistProgress = 0;
+        progressBeforeSlideBack = 0;
 
         burntOutState = false;
         burnOutTurnsRemaining = 0;
@@ -205,6 +216,7 @@ public class Typist
      */
     public void slideBack(int amount)
     {
+        progressBeforeSlideBack = typistProgress;
         typistProgress -= Math.abs(amount);
         if (typistProgress < 0) {
             typistProgress = 0;
