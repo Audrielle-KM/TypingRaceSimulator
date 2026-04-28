@@ -40,10 +40,15 @@ public class TypingGUI
     // Dropdown list that holds values for passagelength & number of seats
     static JComboBox<String> lengthOption;
     static JComboBox<Integer> seatsOption;
+    static JComboBox<String> styleOption;
+    static JComboBox<String> keyboardType;
+    static JComboBox<String> symbolOption;
 
     // GUI components that text values will be used across the program
     static JLabel selectedLength;
     static JLabel numberOfSeatsText;
+    static JTextArea keyboardInfo;
+    static JTextArea stylesInfo;
 
     static JButton autocorrectButton;
     static JButton nightShiftButton;
@@ -690,5 +695,37 @@ public class TypingGUI
         continue1.setFont(new Font("Arial", Font.PLAIN, 14));
         continue1.setFocusPainted(false);
         mainPanel.add(continue1);
+
+        //Customisation
+        JPanel customisationPanel = new JPanel(layout);
+        customisationPanel.setBackground(Color.decode("#eeeeee"));
+        customisationPanel.setLayout(null);
+
+
+        JLabel customisationHeading = new JLabel("Customisation Menu");
+        customisationHeading.setBounds(250, 31, 300, 30);
+        customisationHeading.setFont(new Font("Arial", Font.ITALIC, 18));
+        customisationHeading.setForeground(Color.decode("#ff7146"));
+        customisationPanel.add(customisationHeading);
+
+        JLabel typingStyleText = new JLabel("Typing Style:");
+        typingStyleText.setBounds(16, 71, 106, 18);
+        typingStyleText.setFont(new Font("Arial", Font.PLAIN, 14));
+        typingStyleText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(typingStyleText);
+
+        String styles[] = {"Touch Typist", "Hunt & Peck", "Phone Thumbs", "Voice-to-Text"};
+        styleOption = new JComboBox<String>(styles);
+        styleOption.setBounds(20, 100, 140, 21);
+        customisationPanel.add(styleOption);
+
+        stylesInfo = new JTextArea("+ no change accuracy rating; " + "+" +  "0.05 burnout risk");
+        stylesInfo.setBounds(20, 124, 106, 18);
+        stylesInfo.setFont(new Font("Arial", Font.PLAIN, 8));
+        stylesInfo.setForeground(Color.decode("#2bc36b"));
+        stylesInfo.setLineWrap(true);
+        stylesInfo.setWrapStyleWord(true);
+        stylesInfo.setEditable(false);
+        customisationPanel.add(stylesInfo);
     }
 }
