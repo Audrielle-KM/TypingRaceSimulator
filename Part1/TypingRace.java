@@ -18,6 +18,7 @@ public class TypingRace
     private Typist seat1Typist;
     private Typist seat2Typist;
     private Typist seat3Typist;
+    private Typist winnerTypist;
 
     // Accuracy thresholds for mistype and burnout events
     // (Ty tuned these values "by feel". They may need adjustment.)
@@ -82,6 +83,7 @@ public class TypingRace
         // (Ty was in a hurry here)
         seat1Typist.resetToStart();
         seat2Typist.resetToStart();
+        seat3Typist.resetToStart(); // (FIXED)seat3Typist reset was missing
 
         while (!finished)
         {
