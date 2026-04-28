@@ -28,9 +28,6 @@ public class TypingGUI
     private static ArrayList<JTextArea> bars = new ArrayList<>();
     private static ArrayList<JTextArea> typiststatus = new ArrayList<>();
 
-    private Typist seat1Typist;
-    private Typist seat2Typist;
-    private Typist seat3Typist;
     private static int numberOfTypists = 0;
     private static Typist winnerTypist;
 
@@ -77,6 +74,12 @@ public class TypingGUI
     static JButton wristSupportButton;
     static JButton energyDrinkButton;
     static JButton noiseCHButton;
+
+    //Match timer
+    static Timer time;
+    static long startTime; // stores starting time
+    static long finishTime; // stores finishing time
+    static boolean finished = false;
 
     /**
      * halves slide back amount duration
@@ -347,81 +350,46 @@ public class TypingGUI
      * Note from Ty: "I didn't bother printing the winner at the end,
      * you can probably figure that out yourself."
      */
-    public void startRace()
+    public static void startRace()
     {
-        boolean finished = false;
-
-        // Reset all typists to the start of the passage
-        // (Ty was in a hurry here)
-        seat1Typist.resetToStart();
-        seat2Typist.resetToStart();
-        seat3Typist.resetToStart(); // (FIXED)seat3Typist reset was missing
-
-        while (!finished)
+         finished = false;
+         for (Typist2 typist : typists)
         {
-            // Advance each typist by one turn
-            advanceTypist(seat1Typist);
-            advanceTypist(seat2Typist);
-            advanceTypist(seat3Typist);
-
-            // Print the current state of the race
-            printRace();
-
-            // Check if any typist has finished the passage
-            if ( raceFinishedBy(seat1Typist) || raceFinishedBy(seat2Typist) || raceFinishedBy(seat3Typist) )
-            {
-                finished = true;
-            }
-
-            // Wait 200ms between turns so the animation is visible
-            try {
-                TimeUnit.MILLISECONDS.sleep(200);
-            } catch (Exception e) {}
+            typist.resetToStart();
         }
+        
+        
+        time = new Timer(NEW_SPEED, e-> {
+            if (!finished) {
+                for (Typist2 typist : typists)
+                {
+                    if (caffeineButton.getText().equals("ON"))
+                    {
+                        caffeineTurns++;
 
-        /**
-         * if finished is true
-         * each competitor is checked if they have ever been burnt out mid-race and their accuracy is deducted by 0.02.
-         * the winner's accuracy is improved by 0.04.
-         * The winner's name is called out and their final accuracy is announced 
-         * followed by how much it has improved/reduced/no changes from their old accuracy
-         * 
-         */
+                        if (caffeineTurns >= 11)
+                        {
+                            NEW_SPEED = SPEED;
+                        }
+                        
+                    }
 
-       if (finished) 
-        {
+                    if (!finished)
+                    {
+                        advanceTypist(typist);
 
-            if (seat1Typist.getGotBurntOut())
-            {
-                seat1Typist.setAccuracy(seat1Typist.getAccuracy() - 0.02);
-            }
-            if (seat2Typist.getGotBurntOut())
-            {
-                seat2Typist.setAccuracy(seat2Typist.getAccuracy() - 0.02);
-            }
-            if (seat3Typist.getGotBurntOut())
-            {
-                seat3Typist.setAccuracy(seat3Typist.getAccuracy() - 0.02);
+                        // Print the current state of the race
+                    
+                        printRace();
+                    }
+                }
             }
 
-            winnerTypist.setAccuracy(winnerTypist.getAccuracy() + 0.04);
-            System.out.println("And the winner is..." + winnerTypist.getName());
 
-            String winnerOldAccuracy = String.format("%.2f", winnerTypist.getOldAccuracy()); // 2 dp for consistency
-
-            if (winnerTypist.getAccuracy() > winnerTypist.getOldAccuracy()) 
-            {
-                System.out.println("Final accuracy: " + winnerTypist.getAccuracy() + " (improved from " + winnerOldAccuracy + ")" );
-            }
-            else if (winnerTypist.getAccuracy() == winnerTypist.getOldAccuracy() )
-            {
-                System.out.println("Final accuracy: " + winnerTypist.getAccuracy() + " (no changes from  " + winnerOldAccuracy + ")" );
-            }
-            else 
-            {
-                System.out.println("Final accuracy: " + winnerTypist.getAccuracy() + " (reduced from " + winnerOldAccuracy + ")" );
-            }
-        }
+                
+        });
+        startTime = System.currentTimeMillis(); // records starting time
+        time.start();
     }
 
     /**
@@ -437,7 +405,7 @@ public class TypingGUI
      *
      * @param theTypist the typist to advance
      */
-    private void advanceTypist(Typist theTypist)
+    private static void advanceTypist(Typist2 theTypist)
     {
         if (theTypist.isBurntOut())
         {
@@ -511,7 +479,7 @@ public class TypingGUI
      * Shows each typist's position along the passage, burnout state,
      * and a WPM estimate based on current progress.
      */
-    private void printRace()
+    private static void printRace()
     {
         System.out.print('\u000C'); // Clear terminal
 
@@ -545,7 +513,7 @@ public class TypingGUI
      *
      * @param theTypist the typist whose lane to print
      */
-    private void printSeat(Typist theTypist)
+    private static void printSeat(Typist theTypist)
     {
         int spacesBefore = theTypist.getProgress();
         int spacesAfter  = passageLength - theTypist.getProgress();
@@ -1501,11 +1469,19 @@ public class TypingGUI
             confirmChoices();
             racePanel.removeAll();
             layout.show(card, "race");
-            
+            racePanel.add(SymbolDetails());
+            racePanel.add(ModifiersDetails());
+            racePanel.add(AccessoriesDetails());
+            for (int i = 0; i < numberOfTypists; i++)
+            {
+                Typist2 theTypist = typists.get(i);
+                racePanel.add(createProgressBar(theTypist));
+            }
 
             racePanel.revalidate();
             racePanel.repaint();
 
+            startRace();
         });
         backButton.addActionListener(e ->{
             setOnClickColour(backButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
