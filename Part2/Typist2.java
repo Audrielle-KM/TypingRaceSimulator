@@ -29,9 +29,12 @@ public class Typist2
     private boolean burntOutState; // tracks if typist is burnt out or not
     private int burnOutTurnsRemaining = 0; // number of turns of burnout remaining
     private int mistypes; // number of mistypes during the race
+    private int burnouts; // number of burnouts the typist burnt out during the race
     private double typistWPM; // tracks typist's WPM
     private double bestWPM = 0.0; // records personal best
 
+    private int totalburnouts = 0;
+    private int totalmistypes = 0;
     private int totalwins = 0;
 
     private int progressBeforeSlideBack = 0; // typist's progress before slideback
@@ -40,6 +43,7 @@ public class Typist2
     private boolean gotBurntOut = false; //(if typist ever burns out in game; when game is over, this value helps determine if typist loses accuracy)
 
     private ArrayList<RaceHistory> history = new ArrayList<>(); // history list that stores each frame of the race
+    private ArrayList<String> badges = new ArrayList<>(); // badge list of all badges earned by typist
 
     // Constructor of class Typist
     /**
@@ -59,6 +63,7 @@ public class Typist2
         oldAccuracy = typistAccuracy;
         oldBestWPM = bestWPM;
     }
+
 
 
     // Methods of class Typist
@@ -135,6 +140,16 @@ public class Typist2
     }
 
     /**
+     * Returns the typist's badges
+     * 
+     * @return typist's badge array list
+     */
+    public ArrayList<String> getBadges()
+    {
+        return badges;
+    }
+
+    /**
      * Returns the typist's current progress through the passage.
      * Progress is measured in characters typed correctly so far.
      * Note: this value can decrease if the typist mistypes.
@@ -147,12 +162,35 @@ public class Typist2
     }
 
     /**
+     * Returns the proportion of keystrokes tat were correct
+     *
+     * @return accuracy % ad a stirng
+     */
+    public String getAccuracyPercentage() // accessor
+    {
+        int correct_keystrokes = typistProgress - mistypes;
+
+        double percentage = Math.abs(((correct_keystrokes)/ (double) (typistProgress + mistypes)) * 100); // non-negative
+        return Math.round(percentage * 100.0) / 100.0 + "%"; // 2dp%
+    }
+
+    /**
      * Returns the typist's progress before slideback() is called
      * 
      */
     public int getProgressBeforeSlideBack() 
     {
         return progressBeforeSlideBack;
+    }
+
+    /**
+     * Returns the name of the typist.
+     *
+     * @return the typist's name as a String
+     */
+    public String getName() // accessor
+    {
+        return typistName;
     }
 
     /**
@@ -201,17 +239,7 @@ public class Typist2
     {
         return bestWPM;
     }
-
-    /**
-     * Returns the name of the typist.
-     *
-     * @return the typist's name as a String
-     */
-    public String getName() // accessor
-    {
-        return typistName;
-    }
-
+    
     /**
      * Returns the character symbol used to represent this typist.
      *
@@ -245,21 +273,43 @@ public class Typist2
     }
 
     /**
-     * Returns the number of wins typist has achieved.
+     * Returns the number of mistypes typist has done.
      *
-     * @return the typist's number of wins
+     * @return the typist's number of mistypes
      */
-    public int getWins() //accessor
+    public int getMistypes() //accessor
     {
-       return totalwins;
+       return mistypes;
     }
 
     /**
+     * Returns the number of burnouts typist has gotten during the race.
+     *
+     * @return the typist's number of burnouts
+     */
+    public int getBurnoutsCount() //accessor
+    {
+       return burnouts;
+    }
+
+    /**
+     * Returns the sum of burnouts the typist has faced in all races
+     *
+     * @return the typist's total number of burnouts in all races
+     */
+    public int getTotalBurnouts() //accessor
+    {
+       return totalburnouts;
+    }
+    
+    /**
      * Resets the typist to their initial state, ready for a new race.
      * Progress returns to zero, burnout is cleared entirely.
+     * Resets history list for next race
      */
     public void resetToStart()
     {
+
         oldBestWPM = bestWPM;
         typistProgress = 0;
         progressBeforeSlideBack = 0;
@@ -267,6 +317,8 @@ public class Typist2
         burntOutState = false;
         burnOutTurnsRemaining = 0;
         gotBurntOut = false;
+        mistypes = 0;
+        burnouts = 0;
 
         history.clear();
         oldAccuracy = typistAccuracy;
@@ -306,12 +358,25 @@ public class Typist2
      */
     public void slideBack(int amount)
     {
+        mistypes++;
+        totalmistypes++;
         progressBeforeSlideBack = typistProgress;
+
         typistProgress -= Math.abs(amount);
         if (typistProgress < 0) {
             typistProgress = 0;
         }
 
+    }
+
+    /**
+     * Adds new badge to the list of badges the typist has earned
+     *
+     * @param badge the badge the typist has earned
+     */
+    public void addBadge(String badge)
+    {
+        badges.add(badge);
     }
 
     /**
@@ -377,6 +442,7 @@ public class Typist2
 
     }
 
+
     /**
      * Adds to typist's number of wins
      *
@@ -384,6 +450,15 @@ public class Typist2
     public void gainWins()
     {
         totalwins++;
+    }
+
+    /**
+     * adds burnout count by 1
+     */
+    public void addBurnoutCount()
+    {
+        burnouts += 1;
+        totalburnouts += burnouts;
     }
 
     /**
