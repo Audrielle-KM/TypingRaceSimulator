@@ -713,6 +713,64 @@ public class TypingGUI
             continueButton.setFocusPainted(false);
             replayBars.add(continueButton);
 
+            continueButton.addActionListener(e ->{
+                setOnClickColour(continueButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+                JPanel leaderboardPanel = new JPanel(layout);
+                leaderboardPanel.setBackground(Color.decode("#1e1e1e"));
+                leaderboardPanel.setLayout(null);
+
+                JLabel heading = new JLabel("Leaderboard");
+                heading.setBounds(359, 19, 149, 34);
+                heading.setFont(new Font("Arial", Font.BOLD,  25));
+                heading.setForeground(Color.decode("#D9D9D9"));
+                leaderboardPanel.add(heading);
+
+                JButton mainmenuButton = new JButton("Main Menu>>");
+                mainmenuButton.setBounds(500, 24, 106, 29);
+                mainmenuButton.setFont(new Font("Arial", Font.ITALIC,  14));
+                mainmenuButton.setBackground(Color.decode("#2e2e2e"));
+                mainmenuButton.setForeground(Color.decode("#D9D9D9"));
+                mainmenuButton.setFocusPainted(false);
+
+                leaderboardPanel.add(mainmenuButton);
+
+                mainmenuButton.addActionListener(ee ->{
+                    layout.show(card, "main");
+                    bars.clear();
+                    typiststatus.clear();
+                    winnerTypist = null;
+
+                    setOnClickColour(mainmenuButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+                });
+
+                JPanel leaderboard = new JPanel();
+                leaderboard.setBackground(Color.decode("#373737"));
+                leaderboard.setLayout(new GridLayout(0,1));
+
+                JScrollPane scroll = new JScrollPane(leaderboard);
+                scroll.setBounds(174, 69, 417, 220);
+                scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                leaderboardPanel.add(scroll);
+
+                JTextArea badges = new JTextArea("⚡Speed Demon = 3 consecutive wins    ☝Iron Fingers = 5 races without a burnout     ☠Keyboard Smasher = 10 total wins       //       [Rank Awards: 3pts for 1st place, 2pts for 2nd place, 1pt for 3rd place; +1pt won best personal; -2pts if burnt out during race");
+                badges.setBounds(12, 66, 124, 225);
+                badges.setBackground(Color.decode("#B2B2B2"));
+                badges.setForeground(Color.decode("#656565"));
+                badges.setEditable(false);
+                badges.setWrapStyleWord(true);
+                badges.setLineWrap(true);
+                leaderboardPanel.add(badges);
+
+                JLabel badgesHeading = new JLabel("Badges");
+                badgesHeading.setBounds(49, 46, 55, 18);
+                heading.setFont(new Font("Arial", Font.BOLD,  14));
+                badgesHeading.setForeground(Color.decode("#D9D9D9"));
+                leaderboardPanel.add(badgesHeading);
+
+                card.add(leaderboardPanel, "leaderboard");
+                layout.show(card, "leaderboard");
+            });
+
             card.add(historyPanel, "history");
             
             layout.show(card, "history");
