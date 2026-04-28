@@ -45,6 +45,10 @@ public class TypingGUI
     static JLabel selectedLength;
     static JLabel numberOfSeatsText;
 
+    static JButton autocorrectButton;
+    static JButton nightShiftButton;
+    static JButton caffeineButton;
+
     /**
      * Sets the passage length (Short, Medium, Long) [not Custom - different method]
      */
@@ -564,5 +568,127 @@ public class TypingGUI
                 numberOfTypists = Integer.parseInt(seatsOption.getSelectedItem().toString());
             }
         });
+        JLabel difficultyModifiersText = new JLabel("Difficulty Modifiers");
+        difficultyModifiersText.setBounds(411, 68, 147, 21);
+        difficultyModifiersText.setFont(new Font("Arial", Font.BOLD,  14));
+        difficultyModifiersText.setForeground(Color.decode("#434343"));
+        mainPanel.add(difficultyModifiersText);
+
+        JLabel autocorrectText = new JLabel("Autocorrect:");
+        autocorrectText.setBounds(304, 97, 106, 18);
+        autocorrectText.setFont(new Font("Arial", Font.PLAIN,  14));
+        autocorrectText.setForeground(Color.decode("#1b1b1b"));
+        mainPanel.add(autocorrectText);
+
+        autocorrectButton = new JButton("OFF");
+        autocorrectButton.setBounds(401, 89, 42, 39);
+        autocorrectButton.setBackground(Color.decode("#dd3333"));
+        autocorrectButton.setForeground(Color.decode("#1b1b1b"));
+        autocorrectButton.setFont(new Font("Arial", Font.PLAIN,  14));
+        autocorrectButton.setFocusPainted(false);
+        mainPanel.add(autocorrectButton);
+
+        autocorrectButton.addActionListener(e -> {
+            if (autocorrectButton.getText().toString().equals("ON"))
+            {
+                autocorrectButton.setBackground(Color.decode("#dd3333"));
+                autocorrectButton.setText("OFF");
+                
+            }
+            else
+            {
+                autocorrectButton.setBackground(Color.decode("#33dd8a"));
+                autocorrectButton.setText("ON");
+            }
+        });
+
+        JLabel caffeineModeText = new JLabel("Caffeine Mode:");
+        caffeineModeText.setBounds(468, 94, 106, 18);
+        caffeineModeText.setFont(new Font("Arial", Font.PLAIN, 14));
+        caffeineModeText.setForeground(Color.decode("#1b1b1b"));
+        mainPanel.add(caffeineModeText);
+
+        caffeineButton = new JButton("OFF");
+        caffeineButton.setBounds(582, 84, 42, 39);
+        caffeineButton.setBackground(Color.decode("#dd3333"));
+        caffeineButton.setForeground(Color.decode("#1b1b1b"));
+        caffeineButton.setFont(new Font("Arial", Font.PLAIN,  14));
+        caffeineButton.setFocusPainted(false);
+        mainPanel.add(caffeineButton);
+
+        caffeineButton.addActionListener(e -> {
+            if (caffeineButton.getText().toString().equals("ON"))
+            {
+                caffeineButton.setText("OFF");
+                caffeineButton.setBackground(Color.decode("#dd3333"));
+            }
+            else
+            {
+                caffeineButton.setText("ON");
+                caffeineButton.setBackground(Color.decode("#33dd8a"));
+            }
+        });
+
+        JLabel nightShiftText = new JLabel("Night Shift:");
+        nightShiftText.setBounds(376, 133, 106, 18);
+        nightShiftText.setFont(new Font("Arial", Font.PLAIN, 14));
+        nightShiftText.setForeground(Color.decode("#1b1b1b"));
+        mainPanel.add(nightShiftText);
+
+        nightShiftButton = new JButton("OFF");
+        nightShiftButton.setBounds(457, 121, 42, 39);
+        nightShiftButton.setBackground(Color.decode("#dd3333"));
+        nightShiftButton.setForeground(Color.decode("#1b1b1b"));
+        nightShiftButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        nightShiftButton.setFocusPainted(false);
+        mainPanel.add(nightShiftButton);
+        
+        nightShiftButton.addActionListener(e ->{
+            if (nightShiftButton.getText().toString().equals("ON"))
+            {
+                nightShiftButton.setText("OFF");
+                nightShiftButton.setBackground(Color.decode("#dd3333"));
+            }
+            else
+            {
+                nightShiftButton.setText("ON");
+                nightShiftButton.setBackground(Color.decode("#33dd8a"));
+            }
+        });
+
+        JTextArea autocorrectInfoText = new JTextArea("Autocorrect: When enabled, the slideBack amount is halved, simulating  modern phone keyboards. ");
+        autocorrectInfoText.setBounds(306, 160, 327, 56);
+        autocorrectInfoText.setFont(new Font("Arial", Font.PLAIN, 14));
+        autocorrectInfoText.setForeground(Color.decode("#1b1b1b"));
+        autocorrectInfoText.setLineWrap(true);
+        autocorrectInfoText.setWrapStyleWord(true);
+        autocorrectInfoText.setEditable(false);
+        mainPanel.add(autocorrectInfoText);
+
+        JTextArea caffieneInfoText = new JTextArea("Caffeine Mode: All typists gain a temporary speed boost for the first 10 turns,  followed by increased burnout risk.");
+        caffieneInfoText.setBounds(305, 220, 312, 55);
+        caffieneInfoText.setFont(new Font("Arial", Font.PLAIN, 14));
+        caffieneInfoText.setForeground(Color.decode("#1b1b1b"));
+        caffieneInfoText.setLineWrap(true);
+        caffieneInfoText.setWrapStyleWord(true);
+        caffieneInfoText.setEditable(false);
+        mainPanel.add(caffieneInfoText);
+
+        JTextArea nightShiftInfoText = new JTextArea("Night Shift: Accuracy ratings are slightly reduced across the board: everyone is tired. ");
+        nightShiftInfoText.setBounds(306, 274, 337, 38);
+        nightShiftInfoText.setFont(new Font("Arial", Font.PLAIN, 14));
+        nightShiftInfoText.setForeground(Color.decode("#1b1b1b"));
+        nightShiftInfoText.setLineWrap(true);
+        nightShiftInfoText.setWrapStyleWord(true);
+        nightShiftInfoText.setEditable(false);
+        mainPanel.add(nightShiftInfoText);
+
+        JButton continue1 = new JButton("Continue");
+        continue1.setBounds(86, 280, 106, 30);
+        continue1.setBackground(Color.decode("#ffffff"));
+        continue1.setForeground(Color.decode("#1b1b1b"));
+        continue1.setFont(new Font("Arial", Font.PLAIN, 14));
+        continue1.setFocusPainted(false);
+        mainPanel.add(continue1);
     }
 }
