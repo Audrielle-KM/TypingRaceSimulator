@@ -1,13 +1,15 @@
 /**
- * Write a description of class Typist here.
+ * The Typist Class is designed to represent an object(in this case, a competitor/typist) 
+ * and contains private fields, a constructor, getter and setter methods. 
+ * The class is built to store and manage the typist's data safely through encapsulation. 
  *
  * Starter code generously abandoned by Ty Posaurus, your predecessor,
  * who typed with two fingers and considered that "good enough".
  * He left a sticky note: "the slide-back thing is optional probably".
  * It is not optional. Good luck.
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Audrielle Kaytlyn Myesha
+ * @version 1
  */
 public class Typist
 {
@@ -18,7 +20,12 @@ public class Typist
     // A third tracks HOW MANY turns of burnout remain (not just whether they are burnt out).
     // The remaining three should be fairly obvious.
 
-
+    private String typistName;
+    private char typistSymbol; // unicode char
+    private double typistAccuracy; // accuracy rating
+    private int typistProgress; // tracks how far along the passage
+    private boolean burntOutState; // tracks if typist is burnt out or not
+    private int burnOutTurnsRemaining = 0; // number of turns of burnout remaining
 
 
     // Constructor of class Typist
