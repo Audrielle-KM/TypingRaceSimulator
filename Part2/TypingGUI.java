@@ -20,7 +20,7 @@ import javax.swing.*;
  */
 public class TypingGUI
 {
-    private int passageLength;   // Total characters in the passage to type
+    private static int passageLength;   // Total characters in the passage to type
 
     private static CardLayout layout; // Allows flipping through each page/section of GUI
     private static JPanel card;
@@ -45,18 +45,22 @@ public class TypingGUI
     static JLabel numberOfSeatsText;
 
     /**
-     * Constructor for objects of class TypingRace.
-     * Sets up the race with a passage of the given length.
-     * Initially there are no typists seated.
-     *
-     * @param passageLength the number of characters in the passage to type
+     * Sets the passage length (Short, Medium, Long) [not Custom - different method]
      */
-    public TypingGUI(int passageLength)
+    private static void setPassageLength()
     {
-        this.passageLength = passageLength;
-        seat1Typist = null;
-        seat2Typist = null;
-        seat3Typist = null;
+         if (lengthOption.getSelectedItem().toString().equals("Short"))
+        {
+            passageLength = 10;
+        }
+        else if (lengthOption.getSelectedItem().toString().equals("Medium"))
+        {
+            passageLength = 20;
+        }
+        else if (lengthOption.getSelectedItem().toString().equals("Long"))
+        {
+            passageLength = 30;
+        }
     }
 
     /**
@@ -428,6 +432,35 @@ public class TypingGUI
                 {
                     customLengthTextField.setText("(5-50)");
                     customLengthTextField.setForeground(Color.GRAY);
+                }
+            }
+        });
+
+        JButton setLengthButton = new JButton("Set");
+        setLengthButton.setBounds(186, 142, 47, 29);
+        setLengthButton.setBackground(Color.decode("#ffffff"));
+        setLengthButton.setForeground(Color.decode("#1b1b1b"));
+        setLengthButton.setFocusPainted(false);
+        setLengthButton.setVisible(false);
+        mainPanel.add(setLengthButton);
+
+        lengthOption.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                selectedLength.setText(lengthOption.getSelectedItem().toString() + "🗸");
+
+                if (lengthOption.getSelectedItem().toString().equals("Custom"))
+                {
+                    customLengthTextField.setVisible(true);
+                    customLengthTextField.setEditable(true);
+                    setLengthButton.setVisible(true);
+                }
+                else
+                {
+                    customLengthTextField.setVisible(false);
+                    customLengthTextField.setEditable(false);
+                    setLengthButton.setVisible(false);
                 }
             }
         });
