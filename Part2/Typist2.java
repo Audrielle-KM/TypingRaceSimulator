@@ -28,6 +28,7 @@ public class Typist2
     private int typistProgress; // tracks how far along the passage
     private boolean burntOutState; // tracks if typist is burnt out or not
     private int burnOutTurnsRemaining = 0; // number of turns of burnout remaining
+    private int mistypes; // number of mistypes during the race
     private double typistWPM; // tracks typist's WPM
     private double bestWPM = 0.0; // records personal best
 
@@ -175,6 +176,33 @@ public class Typist2
     }
 
     /**
+     * Returns the final WPM of the typist.
+     *
+     * @return the typist's final WPM as a non-negative
+     */
+    public double getfinalWPM(long finish, long start) // accessor
+    {
+        long timeTaken = finish - start;
+        double min = (timeTaken / 1000.0) / 60.0;
+
+        int correct_keystrokes = (history.get(history.size() -1)).getPosition();
+
+        double word = (correct_keystrokes + mistypes) / 5.0;
+
+        return Math.round((word / min) * 100.0) / 100.0; // 2dp for consistency;
+    }
+
+    /**
+     * Returns the best WPM the typist has performed
+     *
+     * @return the typist's best WPM as a non-negative
+     */
+    public double getPersonalBest() // accessor
+    {
+        return bestWPM;
+    }
+
+    /**
      * Returns the name of the typist.
      *
      * @return the typist's name as a String
@@ -232,6 +260,7 @@ public class Typist2
      */
     public void resetToStart()
     {
+        oldBestWPM = bestWPM;
         typistProgress = 0;
         progressBeforeSlideBack = 0;
 
@@ -355,6 +384,35 @@ public class Typist2
     public void gainWins()
     {
         totalwins++;
+    }
+
+    /**
+     * Sets the typist's WPM
+     * 
+     * @param current current time of the race
+     * @param passageLength length of the passage
+     * @param start starting time of the race
+     */
+    public void setWPM(long current, long start)
+    {
+        if (current > start)
+        {
+            long timeTaken = current - start;
+            double min = (timeTaken / 1000.0) / 60.0;
+
+            double word = (typistProgress + mistypes) / 5.0; // A standard word is defined as 5 chars, including spaces + punctuations
+
+            typistWPM =  Math.round((word / min) * 100.0) / 100.0; // 2dp for consistency
+            
+            if (bestWPM < typistWPM)
+            {
+                bestWPM = typistWPM;
+            }
+        }
+        else
+        {
+            typistWPM = 0.0;
+        }
     }
 
 }
