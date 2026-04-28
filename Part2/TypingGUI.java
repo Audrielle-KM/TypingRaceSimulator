@@ -217,6 +217,27 @@ public class TypingGUI
     }
 
     /**
+     * Chaning the components(buttons) background when it's clicked
+     * 
+     * @param button the modified button
+     * @param onClickColour the colour when button is clicked
+     * @param BackColour the original colour of the button
+     */
+    public static void setOnClickColour(JComponent button, Color onClickColour, Color BackColour)
+    {
+        button.setOpaque(true);
+        button.addMouseListener(new MouseAdapter() {
+            public void mouseClick(MouseEvent e){
+                button.setBackground(onClickColour);
+            }
+
+            public void mouseReleased(MouseEvent e){
+                button.setBackground(BackColour);
+            }
+        });
+    }
+
+    /**
      * Returns true if the given typist has completed the full passage.
      *
      * @param theTypist the typist to check
@@ -462,6 +483,57 @@ public class TypingGUI
                     customLengthTextField.setEditable(false);
                     setLengthButton.setVisible(false);
                 }
+            }
+        });
+        setLengthButton.addActionListener(e -> { 
+            try {
+                
+                setOnClickColour(setLengthButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+                passageLength = Integer.parseInt(customLengthTextField.getText().trim());
+                if (passageLength >= 5 && passageLength <= 50)
+                {
+                    setLengthButton.setText("🗸");
+
+                    javax.swing.Timer timer = new javax.swing.Timer(1000, ee -> {
+                    
+                        customLengthTextField.setEditable(true);
+                        setLengthButton.setText("Set");
+                    
+                    });
+                    timer.setRepeats(false);
+                    timer.start();
+                    customLengthTextField.setEditable(false);
+                }
+                else
+                {
+                    javax.swing.Timer timer = new javax.swing.Timer(1000, ee -> {
+                     
+                    customLengthTextField.setEditable(true);
+            
+                    });
+                    timer.setRepeats(false);
+                    timer.start();
+                    setLengthButton.setText("Set");
+                    customLengthTextField.setText("Between 5-50!");
+                    customLengthTextField.setEditable(false);
+                     
+                }
+
+            } catch (NumberFormatException error) {
+                
+                javax.swing.Timer timer = new javax.swing.Timer(1000, ee -> {
+                     
+                    customLengthTextField.setEditable(true);
+                    customLengthTextField.setText("(5-50");
+                    customLengthTextField.setForeground(Color.GRAY);
+
+                });
+
+                timer.setRepeats(false);
+                timer.start();
+                setLengthButton.setText("Set");
+                customLengthTextField.setText("Invalid number!");
+                customLengthTextField.setEditable(false);
             }
         });
     }
