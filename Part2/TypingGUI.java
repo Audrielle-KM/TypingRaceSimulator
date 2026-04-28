@@ -148,12 +148,13 @@ public class TypingGUI
         }
     }
 
-    /**
-     * 
-     * Sets keyboard type from a list of different keyboards (text of JCombobox keyboardType).
-     * Each has different effects on speed and mistype rates.
-     * 
-     */
+
+/**
+ * 
+ * Sets keyboard type from a list of different keyboards (text of JCombobox keyboardType).
+ * Each has different effects on speed and mistype rates.
+ * 
+ */
     private static void setKeyboardType()
     {
         int speedChange = 0;
@@ -237,7 +238,8 @@ public class TypingGUI
             NEW_MISTYPE_CHANCE  -= NOISE_CANCELLING_MISTYPE_CHANCE;
         }
     }
-    
+
+
     /**
      * Applies global modifiers that affect all typists and optional add-ons that affect performance.
      * Sets up the race with a passage of given length
@@ -347,15 +349,16 @@ public class TypingGUI
 
     /**
      * Starts the typing race.
-     * All typists are reset to the beginning, then the simulation runs
+     * the simulation runs
      * turn by turn until one typist completes the full passage.
      *
-     * Note from Ty: "I didn't bother printing the winner at the end,
-     * you can probably figure that out yourself."
+     * if caffeine mode is set to true, each typist have a temporary speed boost
+     * with increased burnout risk for first 10 turns
+     * 
      */
     public static void startRace()
     {
-         finished = false;
+        finished = false;
          for (Typist2 typist : typists)
         {
             typist.resetToStart();
@@ -366,6 +369,7 @@ public class TypingGUI
             if (!finished) {
                 for (Typist2 typist : typists)
                 {
+                    typist.setWPM(0, startTime);
                     if (caffeineButton.getText().equals("ON"))
                     {
                         caffeineTurns++;
@@ -393,6 +397,7 @@ public class TypingGUI
         });
         startTime = System.currentTimeMillis(); // records starting time
         time.start();
+
     }
 
     /**
@@ -406,6 +411,10 @@ public class TypingGUI
      *   - They may burn out — more likely for very high-accuracy typists
      *     who are pushing themselves too hard.
      *
+     * If caffeine mode is ON, an additional burnout duration + burnout risk
+     * Each tying style affects probability scales capped by certain amounts
+     * 
+     * 
      * @param theTypist the typist to advance
      */
     private static void advanceTypist(Typist2 theTypist)
@@ -423,204 +432,107 @@ public class TypingGUI
             theTypist.typeCharacter();
         }
 
-        // Mistype check — the probability should reflect the typist's accuracy
-        if (Math.random() < theTypist.getAccuracy() * MISTYPE_BASE_CHANCE)
+        // Mistype check — the probability should reflect the typist's accuracy)
+        if (Math.random() < theTypist.getAccuracy() * NEW_MISTYPE_CHANCE)
         {
-            theTypist.slideBack(SLIDE_BACK_AMOUNT);
+            theTypist.slideBack(NEW_SLIDE_BACK);
         }
 
         // Burnout check — pushing too hard increases burnout risk
         // (probability scales with accuracy squared, capped at ~0.05)
-        if (Math.random() < 0.05 * theTypist.getAccuracy() * theTypist.getAccuracy())
+        if (caffeineButton.getText().equals("ON"))
         {
-            theTypist.burnOut(BURNOUT_DURATION);
-        }
-    }
-
-    /**
-     * Creates a single typist's lane of the finished race
-     * 
-     * @param race a snapshot of the race
-     * @param theTypist the typist
-     * @return the lane (row)
-     */
-    private static JPanel createBarReplay(RaceHistory race, Typist2 theTypist)
-    {
-        int index = typists.indexOf(theTypist);
-
-        JPanel row = new JPanel(new GridBagLayout());
-        row.setPreferredSize(new Dimension(200,20));
-        GridBagConstraints g = new GridBagConstraints();
-        g.gridy = 0;
-        g.fill = GridBagConstraints.HORIZONTAL;
-
-        String passage = "|";
-
-        JTextArea seat = bars.get(index);
-        seat.setEditable(false);
-        seat.setLineWrap(true);
-        seat.setWrapStyleWord(true);
-        seat.setForeground(progressBarColourSet);
-        seat.setBounds(0, 0, passageLength, 10);
-
-        g.weightx = 1;
-        g.gridx = 0;
-        row.add(seat, g);
-
-        int spacesBefore = race.getPosition();
-        int spacesAfter  = passageLength - race.getPosition();
-
-
-        passage += multiplePrint('◉', spacesBefore);
-        seat.setText(passage);
-
-        // Always show the typist's symbol so they can be identified on screen.
-        // Append ◌ when burnt out so the state is visible without hiding identity.
-        passage += theTypist.getSymbol();
-        seat.setText(passage);
-        if (race.getBurnoutstate())
-        {
-            passage += "◌";
-            seat.setText(passage);
-            spacesAfter--; // symbol + ◌ together take two characters
-        }
-
-        if (!race.getBurnoutstate() && race.getSlidebackposition() > race.getPosition()) {
-
-            String s = "◍";
-            passage += s;
-            seat.setText(passage);
-            spacesAfter--;
-        }
-
-        passage += multiplePrint('○', spacesAfter);
-        passage += "⚑";
-        passage += " ";
-        seat.setText(passage);
-
-        g.gridx = 1;
-        g.weightx = 0.3;
-        String info = theTypist.getName()
-                + " (WPM: " + race.getWPM() + ")"
-                + " (Accuracy: " + race.getAccuracy() +")";
-        JTextArea typistInfo  = typiststatus.get(index);
-        typistInfo.setEditable(false);
-        typistInfo.setLineWrap(true);
-        typistInfo.setWrapStyleWord(true);
-        typistInfo.setText(info);
-        row.add(typistInfo, g);
-
-        return row;
-    }
-
-    /**
-     * Updating the single typist's lane of the finished race
-     * @param race a snippet of the race
-     * @param theTypist the typist
-     */
-    private static void updateBarReplay(RaceHistory race, Typist2 theTypist)
-    {
-        int index = typists.indexOf(theTypist);
-        JTextArea seat = bars.get(index);
-        JTextArea typistInfo = typiststatus.get(index);
-
-        int spacesBefore = race.getPosition();
-        int spacesAfter  = passageLength - race.getPosition();
-
-        String passage = "|";
-
-        passage += multiplePrint('◉', spacesBefore);
-        seat.setText(passage);
-
-        // Always show the typist's symbol so they can be identified on screen.
-        // Append ◌ when burnt out so the state is visible without hiding identity.
-        passage += theTypist.getSymbol();
-        seat.setText(passage);
-        if (race.getBurnoutstate())
-        {
-            passage += "◌";
-            seat.setText(passage);
-            spacesAfter--; // symbol + ◌ together take two characters
-        }
-
-        if (!race.getBurnoutstate() && race.getSlidebackposition() > race.getPosition()) {
-            seat.setText(passage);
-
-            String s = "◍";
-            passage += s;
-            seat.setText(passage);
-            spacesAfter--;
-        }
-
-        passage += multiplePrint('○', spacesAfter);
-        passage += "⚑";
-        passage += " ";
-        seat.setText(passage);
-
-        String info = theTypist.getName()
-                + " (WPM: " + race.getWPM() + ")"
-                + " (Accuracy: " + race.getAccuracy() +")";
-
-        //Print name and accuracy
-        if (race.getBurnoutstate()) // if burnt out
-        {
-
-            info = theTypist.getName()
-                + " (WPM: " + race.getWPM() + ")"
-                + " (Accuracy: " + race.getAccuracy() +")"
-                + " ←  BURNT OUT";
-        }
-        else if (!race.getBurnoutstate() && race.getSlidebackposition() > race.getPosition()) // if mistypes
-        {
-           info = theTypist.getName()
-                + " (WPM: " + race.getWPM() + ")"
-                + " (Accuracy: " + race.getAccuracy() +")"
-                + "  ← just mistyped";
-        }
-        else // neither burnt out nor mistyped
-        {
-           info = theTypist.getName()
-                + " (WPM: " + race.getWPM() + ")"
-                + " (Accuracy: " + race.getAccuracy() +")";
-        }
-        typistInfo.setText(info);
-        
-        
-    }
-
-    /**
-     * Creating and updating the lanes for each typist to display full race history over time
-     * 
-     * @param index the given time the user wants to view from the race
-     * @param historyPanel the GUI history page
-     */
-    public static void ReplaySystem(int index, JPanel historyPanel)
-    {
-        if (historyPanel.getComponentCount() == 0) //if page is empty
-        {
-            for (int i = 0; i < typists.size(); i++)
+            if (styleOption.getSelectedItem().toString().equals("Touch Typist"))
             {
-                Typist2 theTypist = typists.get(i);
-                //JTextArea bar = bars.get(i);
-
-                RaceHistory race = theTypist.getHistory().get(index);
-                
-                historyPanel.add(createBarReplay(race, theTypist));
+                if (Math.random() < (0.05 + BURNOUT_RISK_CAFFEINE) * theTypist.getAccuracy() * theTypist.getAccuracy())
+                {
+                    theTypist.burnOut(NEW_BURNOUT_DURATION);
+                    theTypist.addBurnoutCount();
+                }
+            }
+            else if (styleOption.getSelectedItem().toString().equals("Hunt & Peck"))
+            {
+                if (Math.random() < (0.06 + BURNOUT_RISK_CAFFEINE) * theTypist.getAccuracy() * theTypist.getAccuracy())
+                {
+                    theTypist.burnOut(NEW_BURNOUT_DURATION);
+                    theTypist.addBurnoutCount();
+                } 
+            }
+            else if (styleOption.getSelectedItem().toString().equals("Phone Thumbs"))
+            {
+                if (Math.random() < (0.02 + BURNOUT_RISK_CAFFEINE) * theTypist.getAccuracy() * theTypist.getAccuracy())
+                {
+                    theTypist.burnOut(NEW_BURNOUT_DURATION);
+                    theTypist.addBurnoutCount();
+                }
+            }
+            else
+            {
+                if (Math.random() < (BURNOUT_RISK_CAFFEINE + 0.08) * theTypist.getAccuracy() * theTypist.getAccuracy())
+                {
+                    theTypist.burnOut(NEW_BURNOUT_DURATION);
+                    theTypist.addBurnoutCount();
+                }
             }
         }
-        else // if page is set up already
+        else
         {
-            for (int i = 0; i < typists.size(); i++)
+             if (styleOption.getSelectedItem().toString().equals("Touch Typist"))
             {
-                Typist2 theTypist = typists.get(i);
-                //JTextArea bar = bars.get(i);
-
-                RaceHistory race = theTypist.getHistory().get(index);
-                
-               updateBarReplay(race, theTypist);
+                if (Math.random() < 0.05 * theTypist.getAccuracy() * theTypist.getAccuracy())
+                {
+                    theTypist.burnOut(NEW_BURNOUT_DURATION);
+                    theTypist.addBurnoutCount();
+                }
+            }
+            else if (styleOption.getSelectedItem().toString().equals("Hunt & Peck"))
+            {
+                if (Math.random() < 0.06 * theTypist.getAccuracy() * theTypist.getAccuracy())
+                {
+                    theTypist.burnOut(NEW_BURNOUT_DURATION);
+                    theTypist.addBurnoutCount();
+                } 
+            }
+            else if (styleOption.getSelectedItem().toString().equals("Phone Thumbs"))
+            {
+                if (Math.random() < 0.02 * theTypist.getAccuracy() * theTypist.getAccuracy())
+                {
+                    theTypist.burnOut(NEW_BURNOUT_DURATION);
+                    theTypist.addBurnoutCount();
+                }
+            }
+            else
+            {
+                if (Math.random() < 0.08 * theTypist.getAccuracy() * theTypist.getAccuracy())
+                {
+                    theTypist.burnOut(NEW_BURNOUT_DURATION);
+                    theTypist.addBurnoutCount();
+                }
             }
         }
+    }
 
+    /**
+     * Prints the current state of the race to the GUI.
+     * Shows each typist's position along the passage, burnout state,
+     * and a WPM estimate based on current progress.
+     */
+    private static void printRace()
+    {
+
+        /**try {
+                TimeUnit.MILLISECONDS.sleep(NEW_SPEED);
+            } catch (Exception e) {}*/
+
+
+        for (Typist2 typist : typists)
+        {
+            printSeat(typist);
+            typist.setWPM(System.currentTimeMillis(), startTime);
+
+            raceFinishedBy(typist);
+            
+        }
     }
 
     /**
@@ -844,6 +756,50 @@ public class TypingGUI
     }
 
     /**
+     * Calculates and give points to typists accounting for finishing position, WPM achieved and whether the typist burnt out
+     */
+    private static void rewardSystem()
+    {
+        for (Typist2 typist : rankedtypists)
+        {
+            boolean burnouts = typist.getGotBurntOut();
+            int position = rankedtypists.indexOf(typist);
+
+            if (position == 1) //1st place reward
+            {
+                typist.setPoints(3);
+                typist.setAccuracy(typist.getAccuracy() + 0.08);
+            }
+            else if (position == 2) //2nd place reward
+            {
+                typist.setPoints(2);
+                typist.setAccuracy(typist.getAccuracy() + 0.05);
+            }
+            else if (position == 3) //3rd place reward
+            {
+                typist.setPoints(1);
+                typist.setAccuracy(typist.getAccuracy() + 0.02);
+            }
+            
+            
+            if (typist.getPersonalBest() > typist.getOldBestWPM())
+            {
+                typist.setPoints(1);
+                typist.setAccuracy(typist.getAccuracy() + 0.01);
+            }
+            if (burnouts) // if burnt out then points reduced by 2
+            {
+                typist.setPoints(-2);
+            }
+            else
+            {
+                typist.setAccuracy(typist.getAccuracy() + 0.01);
+            }
+        }
+    }
+
+
+    /**
      * Returns true if the given typist has completed the full passage.
      * Creates history page for the GUI as a display of the full race history/trends over time.
      * Also creates the leaderboard page to show comparison view of all typists on a chosen metric (After each race, track cumulative points across races and maintain global leaderboard)
@@ -853,15 +809,31 @@ public class TypingGUI
      */
     private static void raceFinishedBy(Typist2 theTypist)
     {
-        if (theTypist.getProgress() >= passageLength) 
+        if (theTypist.getProgress() >= passageLength) //(FIXED) progress can overshoot so set to '>='
         {
-            winnerTypist = theTypist; // assigns value to typist who won
             winnerTypist = theTypist; // assigns value to typist who won
             winnerTypist.gainWins();
             finishTime = System.currentTimeMillis();
             finished = true;
             System.out.println(winnerTypist.getName());
 
+            winnerHistory.add(winnerTypist);
+            if (winnerHistory.size() >= 3)
+            {
+                Typist2 winner2gamesago = winnerHistory.get(winnerHistory.size() - 3);
+                Typist2 previouswinner = winnerHistory.get(winnerHistory.size() - 2);
+
+                if (winner2gamesago == winnerTypist && previouswinner == winnerTypist)
+                {
+                    if (!winnerTypist.getBadges().contains("⚡"))
+                    {
+                        winnerTypist.addBadge("⚡"); // Add Speed demon badge if player has earned 3 consecutive wins
+                    }
+                }
+
+            }
+            rankedtypists = new ArrayList<>(typists);
+            rankedtypists.sort((a,b) -> b.getProgress() - a.getProgress()); // re-orders descending
 
             //Comparison/Replay View
             JPanel historyPanel = new JPanel(layout);
@@ -941,11 +913,15 @@ public class TypingGUI
                     winnerTypist = null;
 
                     setOnClickColour(mainmenuButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+
                 });
 
+
                 JPanel leaderboard = new JPanel();
+                //leaderboard.setBounds(174, 69, 417, 229);
                 leaderboard.setBackground(Color.decode("#373737"));
                 leaderboard.setLayout(new GridLayout(0,1));
+                //leaderboardPanel.add(leaderboard);
 
                 leaderboard.add(leaderboardRowHeadings());
                 for (Typist2 typist : rankedtypists)
@@ -993,32 +969,114 @@ public class TypingGUI
             card.add(historyPanel, "history");
             
             layout.show(card, "history");
+            rewardSystem();
         }
     }
 
     /**
-     * Displays the current state of the race to the GUI.
-     * Shows each typist's position along the passage, burnout state,
-     * and a WPM estimate based on current progress.
+     * Returns the closest simple colour name from given RGB colour
+     * @param colour
+     * @return the Colour name and its brightness if given
      */
-    private static void printRace()
+    public static String getColourName(Color colour)
     {
+        int r = colour.getRed();
+        int g = colour.getGreen();
+        int b = colour.getBlue();
 
-        /**try {
-                TimeUnit.MILLISECONDS.sleep(NEW_SPEED);
-            } catch (Exception e) {}*/
+        int colourBrightness = r + g + b;
+        String brightness = "";
 
-
-        for (Typist2 typist : typists)
-        {
-            printSeat(typist);
-
-            raceFinishedBy(typist);
-            
+        if (colourBrightness < 100) {
+            brightness = "Dark ";
         }
+        else if (colourBrightness > 600){
+            brightness = "Light ";
+        }
+
+        if (r > g && r > b) {
+            return brightness + "Red";}
+        else if (g > r && g > b) {
+            return brightness + "Green";}
+        else if (b > r && b > g) {
+            return "Blue";}
+
+        else if (r == g && r > b) {
+            return brightness + "Yellow";
+        }
+        else if (r == b && r > g) {
+            return brightness+ "Purple";
+        }
+        else if (g == b && g > r) {
+            return brightness + "Cyan";
+        }
+
+        return brightness + "Grey";
+    }
+
+    /**
+     * Creates a new window that lists the seated typists and allow user to change their names
+     * If left empty, window closes and a new window appears that says a "Name cannot be empty"
+     */
+    public static void changeTypistsNames()
+    {
+        JDialog dialog = new JDialog((JFrame) null, "Set Typists Names", true);
+        dialog.setLayout(new BorderLayout());
+
+        JPanel list = new JPanel();
+        list.setLayout(new GridLayout(numberOfTypists, 1));
+
+        JTextField[] fields = new JTextField[typists.size()];
+        for (int t = 0; t < typists.size(); t++)
+        {
+            fields[t] = new JTextField(typists.get(t).getName());
+            list.add(fields[t]);
+        }
+
+        JButton confirmButton = new JButton("Confirm");
+        confirmButton.addActionListener(ee -> {
+
+            for (int i = 0; i < numberOfTypists; i++)
+            {
+                if (!fields[i].getText().trim().isEmpty())
+                {
+                    typists.get(i).setName(fields[i].getText());
+
+                }
+                else {JOptionPane.showMessageDialog(dialog, "Name cannot be empty!");}
+            }
+            dialog.dispose();
+        });
+
+        JScrollPane scroll = new JScrollPane(list);
+
+        dialog.add(scroll, BorderLayout.CENTER);
+        dialog.add(confirmButton, BorderLayout.SOUTH);
+
+        dialog.pack();
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
     }
 
      /**
+     * Prints a character a given number of times.
+     *
+     * @param aChar the character to print
+     * @param times how many times to print it
+     */
+    private static String multiplePrint(char aChar, int times)
+    {
+        int i = 0;
+        String s = "";
+        while (i < times)
+        {
+            s += aChar;
+            i = i + 1;
+        }
+        return s;
+    }
+
+    /**
      * updating a single typist's lane
      * @param theTypist
      */
@@ -1074,6 +1132,8 @@ public class TypingGUI
         passage += "⚑";
         passage += " ";
         seat.setText(passage);
+        theTypist.addHistory(new RaceHistory(spacesBefore, theTypist.getWPM(), theTypist.getAccuracy(), theTypist.isBurntOut(), theTypist.getProgressBeforeSlideBack()/** , theTypist.getAccuracyPercentage(passageLength)*/));
+
 
         //Print name and accuracy
         String info = "";
@@ -1178,7 +1238,8 @@ public class TypingGUI
         
         return row;
     }
-     /**
+
+    /**
      * Creates a panel/row for race page to show the passage length and symbols to represent when a typist is burnt out or has just mistyped
      * ◌ (dotted cirecle) = burnt out and ◍ (circle with lines pattern inside) = just mistyped
      * @return the row of race details
@@ -1244,109 +1305,196 @@ public class TypingGUI
     }
 
     /**
-     * Prints a character a given number of times.
-     *
-     * @param aChar the character to print
-     * @param times how many times to print it
+     * Creates a single typist's lane of the finished race
+     * 
+     * @param race a snapshot of the race
+     * @param theTypist the typist
+     * @return the lane (row)
      */
-    private static String multiplePrint(char aChar, int times)
+    private static JPanel createBarReplay(RaceHistory race, Typist2 theTypist)
     {
-        int i = 0;
-        String s = "";
-        while (i < times)
+        int index = typists.indexOf(theTypist);
+
+        JPanel row = new JPanel(new GridBagLayout());
+        row.setPreferredSize(new Dimension(200,20));
+        GridBagConstraints g = new GridBagConstraints();
+        g.gridy = 0;
+        g.fill = GridBagConstraints.HORIZONTAL;
+
+        String passage = "|";
+
+        JTextArea seat = bars.get(index);
+        seat.setEditable(false);
+        seat.setLineWrap(true);
+        seat.setWrapStyleWord(true);
+        seat.setForeground(progressBarColourSet);
+        seat.setBounds(0, 0, passageLength, 10);
+
+        g.weightx = 1;
+        g.gridx = 0;
+        row.add(seat, g);
+
+        int spacesBefore = race.getPosition();
+        int spacesAfter  = passageLength - race.getPosition();
+
+
+        passage += multiplePrint('◉', spacesBefore);
+        seat.setText(passage);
+
+        // Always show the typist's symbol so they can be identified on screen.
+        // Append ◌ when burnt out so the state is visible without hiding identity.
+        passage += theTypist.getSymbol();
+        seat.setText(passage);
+        if (race.getBurnoutstate())
         {
-            s += aChar;
-            i = i + 1;
+            passage += "◌";
+            seat.setText(passage);
+            spacesAfter--; // symbol + ◌ together take two characters
         }
-        return s;
+
+        if (!race.getBurnoutstate() && race.getSlidebackposition() > race.getPosition()) {
+
+            String s = "◍";
+            passage += s;
+            seat.setText(passage);
+            spacesAfter--;
+        }
+
+        passage += multiplePrint('○', spacesAfter);
+        passage += "⚑";
+        passage += " ";
+        seat.setText(passage);
+
+        g.gridx = 1;
+        g.weightx = 0.3;
+        String info = theTypist.getName()
+                + " (WPM: " + race.getWPM() + ")"
+                + " (Accuracy: " + race.getAccuracy() +")";
+        JTextArea typistInfo  = typiststatus.get(index);
+        typistInfo.setEditable(false);
+        typistInfo.setLineWrap(true);
+        typistInfo.setWrapStyleWord(true);
+        typistInfo.setText(info);
+        row.add(typistInfo, g);
+
+        return row;
     }
 
     /**
-     * Returns the closest simple colour name from given RGB colour
-     * @param colour
-     * @return the Colour name and its brightness if given
+     * Updating the single typist's lane of the finished race
+     * @param race a snippet of the race
+     * @param theTypist the typist
      */
-    public static String getColourName(Color colour)
+    private static void updateBarReplay(RaceHistory race, Typist2 theTypist)
     {
-        int r = colour.getRed();
-        int g = colour.getGreen();
-        int b = colour.getBlue();
+        int index = typists.indexOf(theTypist);
+        JTextArea seat = bars.get(index);
+        JTextArea typistInfo = typiststatus.get(index);
 
-        int colourBrightness = r + g + b;
-        String brightness = "";
+        int spacesBefore = race.getPosition();
+        int spacesAfter  = passageLength - race.getPosition();
 
-        if (colourBrightness < 100) {
-            brightness = "Dark ";
-        }
-        else if (colourBrightness > 600){
-            brightness = "Light ";
-        }
+        String passage = "|";
 
-        if (r > g && r > b) {
-            return brightness + "Red";}
-        else if (g > r && g > b) {
-            return brightness + "Green";}
-        else if (b > r && b > g) {
-            return "Blue";}
+        passage += multiplePrint('◉', spacesBefore);
+        seat.setText(passage);
 
-        else if (r == g && r > b) {
-            return brightness + "Yellow";
-        }
-        else if (r == b && r > g) {
-            return brightness+ "Purple";
-        }
-        else if (g == b && g > r) {
-            return brightness + "Cyan";
+        // Always show the typist's symbol so they can be identified on screen.
+        // Append ◌ when burnt out so the state is visible without hiding identity.
+        passage += theTypist.getSymbol();
+        seat.setText(passage);
+        if (race.getBurnoutstate())
+        {
+            passage += "◌";
+            seat.setText(passage);
+            spacesAfter--; // symbol + ◌ together take two characters
         }
 
-        return brightness + "Grey";
+        if (!race.getBurnoutstate() && race.getSlidebackposition() > race.getPosition()) {
+            seat.setText(passage);
+
+            String s = "◍";
+            passage += s;
+            seat.setText(passage);
+            spacesAfter--;
+        }
+
+        passage += multiplePrint('○', spacesAfter);
+        passage += "⚑";
+        passage += " ";
+        seat.setText(passage);
+
+        String info = theTypist.getName()
+                + " (WPM: " + race.getWPM() + ")"
+                + " (Accuracy: " + race.getAccuracy() +")";
+
+        //Print name and accuracy
+        if (race.getBurnoutstate()) // if burnt out
+        {
+
+            info = theTypist.getName()
+                + " (WPM: " + race.getWPM() + ")"
+                + " (Accuracy: " + race.getAccuracy() +")"
+                + " ←  BURNT OUT";
+        }
+        else if (!race.getBurnoutstate() && race.getSlidebackposition() > race.getPosition()) // if mistypes
+        {
+           info = theTypist.getName()
+                + " (WPM: " + race.getWPM() + ")"
+                + " (Accuracy: " + race.getAccuracy() +")"
+                + "  ← just mistyped";
+        }
+        else // neither burnt out nor mistyped
+        {
+           info = theTypist.getName()
+                + " (WPM: " + race.getWPM() + ")"
+                + " (Accuracy: " + race.getAccuracy() +")";
+        }
+        typistInfo.setText(info);
+        
+        
     }
 
-    
-
     /**
-     * Creates a new window that lists the seated typists and allow user to change their names
-     * If left empty, window closes and a new window appears that says a "Name cannot be empty"
+     * Creating and updating the lanes for each typist to display full race history over time
+     * 
+     * @param index the given time the user wants to view from the race
+     * @param historyPanel the GUI history page
      */
-    public static void changeTypistsNames()
+    public static void ReplaySystem(int index, JPanel historyPanel)
     {
-        JDialog dialog = new JDialog((JFrame) null, "Set Typists Names", true);
-        dialog.setLayout(new BorderLayout());
-
-        JPanel list = new JPanel();
-        list.setLayout(new GridLayout(numberOfTypists, 1));
-
-        JTextField[] fields = new JTextField[typists.size()];
-        for (int t = 0; t < typists.size(); t++)
+        if (historyPanel.getComponentCount() == 0) //if page is empty
         {
-            fields[t] = new JTextField(typists.get(t).getName());
-            list.add(fields[t]);
-        }
-
-        JButton confirmButton = new JButton("Confirm");
-        confirmButton.addActionListener(ee -> {
-
-            for (int i = 0; i < numberOfTypists; i++)
+            for (int i = 0; i < typists.size(); i++)
             {
-                if (!fields[i].getText().trim().isEmpty())
-                {
-                    typists.get(i).setName(fields[i].getText());
+                Typist2 theTypist = typists.get(i);
+                //JTextArea bar = bars.get(i);
 
-                }
-                else {JOptionPane.showMessageDialog(dialog, "Name cannot be empty!");}
+                RaceHistory race = theTypist.getHistory().get(index);
+                
+                historyPanel.add(createBarReplay(race, theTypist));
             }
-            dialog.dispose();
-        });
+        }
+        else // if page is set up already
+        {
+            for (int i = 0; i < typists.size(); i++)
+            {
+                Typist2 theTypist = typists.get(i);
+                //JTextArea bar = bars.get(i);
 
-        JScrollPane scroll = new JScrollPane(list);
+                RaceHistory race = theTypist.getHistory().get(index);
+                
+               updateBarReplay(race, theTypist);
+            }
+        }
 
-        dialog.add(scroll, BorderLayout.CENTER);
-        dialog.add(confirmButton, BorderLayout.SOUTH);
-
-        dialog.pack();
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
     }
+
+    /**
+     * The main method that creates the GUI of the TypingRace
+     * Creates main menu and customisation page.
+     * Pages that user have to select options to set up the race
+     */
 
     /**
      * The main method that creates the GUI of the TypingRace
