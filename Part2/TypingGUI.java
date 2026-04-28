@@ -25,6 +25,8 @@ public class TypingGUI
     private static CardLayout layout; // Allows flipping through each page/section of GUI
     private static JPanel card;
     private static ArrayList<Typist2> typists = new ArrayList<>();
+    private static ArrayList<JTextArea> bars = new ArrayList<>();
+    private static ArrayList<JTextArea> typiststatus = new ArrayList<>();
 
     private Typist seat1Typist;
     private Typist seat2Typist;
@@ -616,19 +618,101 @@ public class TypingGUI
     }
 
     /**
+     * Creating a single typist's lane
+     * 
+     * @param theTypist the typist/seat
+     * @return the lane (row)
+     */
+    public static JPanel createProgressBar(Typist2 theTypist)
+    {
+
+        JPanel row = new JPanel(new GridBagLayout());
+        row.setPreferredSize(new Dimension(200,20));
+        GridBagConstraints g = new GridBagConstraints();
+        g.gridy = 0;
+        g.fill = GridBagConstraints.HORIZONTAL;
+
+        int spacesBefore = theTypist.getProgress();
+        int spacesAfter  = passageLength - theTypist.getProgress();
+        String typistAccuracy = String.format("%.2f", theTypist.getAccuracy()); // for consistent formatting
+
+        String passage = "|";
+
+        JTextArea seat = new JTextArea(passage);
+        seat.setEditable(false);
+        seat.setLineWrap(true);
+        seat.setWrapStyleWord(true);
+        seat.setForeground(progressBarColourSet);
+        seat.setBounds(0, 0, passageLength, 10);
+
+
+        g.weightx = 1;
+        g.gridx = 0;
+        row.add(seat, g);
+        bars.add(seat);
+
+        passage += multiplePrint('◉', spacesBefore);
+        seat.setText(passage);
+
+        // Always show the typist's symbol so they can be identified on screen.
+        passage += theTypist.getSymbol();
+        seat.setText(passage);
+
+        passage += multiplePrint('○', spacesAfter);
+        passage += "⚑";
+        passage += " ";
+        seat.setText(passage);
+
+        g.gridx = 1;
+        g.weightx = 0.3;
+        String info = "";
+        JTextArea typistInfo  = new JTextArea(info);
+        typistInfo.setEditable(false);
+        typistInfo.setLineWrap(true);
+        typistInfo.setWrapStyleWord(true);
+        typiststatus.add(typistInfo);
+
+        //Print name and accuracy
+        if (theTypist.isBurntOut()) // if burnt out
+        {
+
+            info = theTypist.getName()
+                + " (Accuracy: " +typistAccuracy + ")"
+                + " BURNT OUT (" + theTypist.getBurnoutTurnsRemaining() + " turns)";
+        }
+        else if (!theTypist.isBurntOut() && theTypist.getProgressBeforeSlideBack() > theTypist.getProgress()) // if mistypes
+        {
+            info = theTypist.getName()
+                + " (Accuracy: " + typistAccuracy + ")"
+                + "  ← just mistyped";
+        }
+        else // neither burnt out nor mistyped
+        {
+           info = theTypist.getName()
+                + " (Accuracy: " + typistAccuracy + ")";
+        }
+        typistInfo.setText(info);
+        row.add(typistInfo, g);
+        
+        return row;
+    }
+
+    /**
      * Prints a character a given number of times.
      *
      * @param aChar the character to print
      * @param times how many times to print it
      */
-    private void multiplePrint(char aChar, int times)
+    private static String multiplePrint(char aChar, int times)
     {
         int i = 0;
+        String s = "";
         while (i < times)
         {
-            System.out.print(aChar);
+            s += aChar;
             i = i + 1;
         }
+        return s;
     }
 
     /**
@@ -671,6 +755,8 @@ public class TypingGUI
 
         return brightness + "Grey";
     }
+
+    
 
     /**
      * Creates a new window that lists the seated typists and allow user to change their names
