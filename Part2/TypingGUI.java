@@ -1343,14 +1343,18 @@ public class TypingGUI
 
             numberOfTypists = Integer.parseInt(seatsOption.getSelectedItem().toString());
         
+            int unicode = getUnicodeSymbol();
+            addTypist(unicode);
         });
         continue2.addActionListener(e ->{
             setOnClickColour(continue2,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
-           
+            confirmChoices();
+            racePanel.removeAll();
+            layout.show(card, "race");
+            
 
             racePanel.revalidate();
             racePanel.repaint();
-
 
         });
         backButton.addActionListener(e ->{
