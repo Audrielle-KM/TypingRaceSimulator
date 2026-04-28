@@ -1083,5 +1083,57 @@ public class TypingGUI
         energyDrinkText.setFont(new Font("Arial", Font.PLAIN, 14));
         energyDrinkText.setForeground(Color.decode("#1b1b1b"));
         customisationPanel.add(energyDrinkText);
+
+        //Race Display
+        JPanel racePanel = new JPanel(layout);
+        racePanel.setBackground(Color.decode("#eeeeee"));
+        racePanel.setLayout(new BoxLayout(racePanel, BoxLayout.Y_AXIS));
+        racePanel.setBorder(BorderFactory.createEmptyBorder(0,0,1,0));
+        
+        JButton continue2 = new JButton("Start Race");
+        continue2.setBounds(86, 280, 106, 30);
+        continue2.setBackground(Color.decode("#ffffff"));
+        continue2.setForeground(Color.decode("#1b1b1b"));
+        continue2.setFont(new Font("Arial", Font.PLAIN, 14));
+        continue2.setFocusPainted(false);
+        customisationPanel.add(continue2);
+
+        JButton backButton = new JButton("Back");
+        backButton.setBounds(27, 280, 54, 30);
+        backButton.setBackground(Color.decode("#ffffff"));
+        backButton.setForeground(Color.decode("#1b1b1b"));
+        backButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        backButton.setFocusPainted(false);
+        customisationPanel.add(backButton);
+
+        card.add(mainPanel, "main");
+        card.add(customisationPanel,"customise");
+        card.add(racePanel, "race");
+
+        continue1.addActionListener(e ->{
+            setOnClickColour(continue1,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+            layout.show(card, "customise");
+
+            setPassageLength();
+
+            numberOfTypists = Integer.parseInt(seatsOption.getSelectedItem().toString());
+        
+        });
+        continue2.addActionListener(e ->{
+            setOnClickColour(continue2,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+           
+
+            racePanel.revalidate();
+            racePanel.repaint();
+
+
+        });
+        backButton.addActionListener(e ->{
+            setOnClickColour(backButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+            layout.show(card, "main");
+        });
+        
+        frame.add(card, BorderLayout.CENTER);
+        frame.setVisible(true);
     }
 }
