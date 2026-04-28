@@ -39,11 +39,20 @@ public class TypingGUI
     //Wait 200ms between turns so the animation is visible
     private static final int SPEED = 200;
 
+    // difficulty modifier and attribute impact values for mistype and burnout events
+    private static final double NIGHT_SHIFT_ACCURACY = 0.2;
+    private static final int CAFFEINE_SPEED_BOOST = 50;
+    private static final int WRIST_SUPPORT_BURNOUT = 1;
+    private static final double NOISE_CANCELLING_MISTYPE_CHANCE = 0.15;
+    private static final double BURNOUT_RISK_CAFFEINE = 0.08;
+    private static final double ENERGY_DRINK_ACCURACY = 0.3;
+
     // Updated accuracy thresholds after applying with difficulty modifiers and accessories for mistype and burnout events
     private static double NEW_MISTYPE_CHANCE = MISTYPE_BASE_CHANCE;
     private static int NEW_SLIDE_BACK = SLIDE_BACK_AMOUNT;
     private static int NEW_BURNOUT_DURATION = BURNOUT_DURATION;
     private static int NEW_SPEED = SPEED;
+    private static int caffeineTurns = 0;
 
     // Dropdown list that holds values for passagelength & number of seats
     static JComboBox<String> lengthOption;
@@ -66,6 +75,188 @@ public class TypingGUI
     static JButton wristSupportButton;
     static JButton energyDrinkButton;
     static JButton noiseCHButton;
+
+    /**
+     * halves slide back amount duration
+     * 
+     */
+    private static void autocorrectON()
+    {
+
+        if (autocorrectButton.getText().equals("ON"))
+        {
+            NEW_SLIDE_BACK /= 2;
+        }
+    }
+
+    /**
+     * allow speed boost followed by increased burnout risk
+     * 
+     * @param speedvalue how much to increase speed
+     */
+    private static void caffeineModeON()
+    {
+
+        if (caffeineButton.getText().equals("ON"))
+        {
+            NEW_SPEED -= CAFFEINE_SPEED_BOOST;
+            NEW_BURNOUT_DURATION += BURNOUT_RISK_CAFFEINE;
+        }
+    }
+
+    /**
+     * Sets the typing style of the race from a predefined list.
+     * Incfluences the accuracy and burnout profile.
+     * 
+     */
+    private static void setTypingStyle()
+    {
+        double accuracy = 0.0;
+
+        for (Typist2 typist : typists)
+        {
+            if (styleOption.getSelectedItem().toString().equals("Touch Typist"))
+            {
+                stylesInfo.setText("+ no change accuracy rating; " + "+0.05 burnout risk");
+            }
+            else if (styleOption.getSelectedItem().toString().equals("Hunt & Peck"))
+            {
+                accuracy += 0.2;
+                typist.setOldAccuracy(typist.getAccuracy() + accuracy);
+                
+            }
+            else if (styleOption.getSelectedItem().toString().equals("Phone Thumbs"))
+            {
+                accuracy += 0.2;
+                typist.setOldAccuracy(typist.getAccuracy() + accuracy);
+                
+            }
+            else
+            {
+                accuracy += 0.5;
+                typist.setOldAccuracy(typist.getAccuracy() + accuracy);
+                
+            }
+        }
+    }
+
+    /**
+     * 
+     * Sets keyboard type from a list of different keyboards (text of JCombobox keyboardType).
+     * Each has different effects on speed and mistype rates.
+     * 
+     */
+    private static void setKeyboardType()
+    {
+        int speedChange = 0;
+        double mistypeChance = 0;
+        
+
+        if (keyboardType.getSelectedItem().toString().equals("Mechanical"))
+        {
+            keyboardInfo.setText( "normal speed" + "; " + "+" + Math.round(MISTYPE_BASE_CHANCE * 100.0) / 100.0 +" mistype chance");
+        }
+        else if (keyboardType.getSelectedItem().toString().equals("Membrane"))
+        {
+            speedChange += 30;
+            NEW_SPEED += speedChange;
+
+            mistypeChance += 0.3;
+            NEW_MISTYPE_CHANCE -= mistypeChance;
+        }
+        else if (keyboardType.getSelectedItem().toString().equals("Touchscreen"))
+        {
+            speedChange += 35;
+            NEW_SPEED -= speedChange;
+
+            mistypeChance += 0.35;
+            NEW_MISTYPE_CHANCE += mistypeChance;
+        }
+        else
+        {
+            speedChange += 10;
+            NEW_SPEED += speedChange;
+
+            mistypeChance += 0.1;
+            NEW_MISTYPE_CHANCE -= mistypeChance;
+        }
+        
+    }
+
+    /**
+     * reduces accuracy ratings slightly across the board 
+     * and increases burnout duration (everyone is tired)
+     * 
+     * if night shift difficulty modifier is enabled
+     */
+    private static void  nightShiftON()
+    {
+
+        if (nightShiftButton.getText().equals("ON"))
+        {
+            for (Typist2 typist : typists)
+            {
+                typist.setAccuracy(typist.getAccuracy() - NIGHT_SHIFT_ACCURACY);
+            }
+            NEW_BURNOUT_DURATION += 1;
+        }
+    }
+    
+
+    /**
+     * reduces burnout duration if wrist support accessory is enabled
+     * 
+     */
+    private static void  wristSupportON()
+    {
+
+        if (wristSupportButton.getText().equals("ON"))
+        {
+            NEW_BURNOUT_DURATION  -= WRIST_SUPPORT_BURNOUT;
+        }
+    }
+
+    /**
+     * reduces chance to mistype
+     * 
+     * if noise cancelling headphones accessory is enabled.
+     */
+    private static void noiseCancellingHeadphonesON()
+    {
+
+        if (noiseCHButton.getText().equals("ON"))
+        {
+            NEW_MISTYPE_CHANCE  -= NOISE_CANCELLING_MISTYPE_CHANCE;
+        }
+    }
+    
+    /**
+     * Applies global modifiers that affect all typists and optional add-ons that affect performance.
+     * Sets up the race with a passage of given length
+     * 
+     * Initially there are no typists seated
+     * Confirms total number of typists is set to the number of seats user has applied
+     * 
+     * Seats a typist at the given seat number and add given symbol set by user
+     */
+    public static void confirmChoices()
+    {
+        setKeyboardType();
+        setTypingStyle();
+
+        autocorrectON();
+        noiseCancellingHeadphonesON();
+        wristSupportON();
+        caffeineModeON();
+        nightShiftON();
+
+        setPassageLength();
+
+        numberOfTypists = Integer.parseInt(seatsOption.getSelectedItem().toString());
+        
+        int unicode = getUnicodeSymbol();
+        addTypist(unicode);
+    }
 
     /**
      * Sets the passage length (Short, Medium, Long) [not Custom - different method]

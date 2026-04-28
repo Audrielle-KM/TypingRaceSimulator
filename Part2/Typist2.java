@@ -243,6 +243,27 @@ public class Typist2
     }
 
     /**
+     * Sets the old accuracy rating of the typist.
+     * Values below 0.0 should be set to 0.0; values above 1.0 should be set to 1.0.
+     *
+     * @param newAccuracy the new accuracy rating
+     */
+    public void setOldAccuracy(double newAccuracy) // mutator
+    {
+        if (newAccuracy < 0.0) {
+            oldAccuracy = 0.0;
+        }
+        else if (newAccuracy > 1.0) {
+            oldAccuracy = 1.0;
+        }
+        else {
+            oldAccuracy = Math.round(newAccuracy * 100.0) / 100.0; // 2dp for consistency
+        }
+        typistAccuracy = oldAccuracy;
+
+    }
+
+    /**
      * Sets the symbol used to represent this typist.
      *
      * @param newSymbol the new symbol character
