@@ -27,7 +27,9 @@ public class Typist
     private boolean burntOutState; // tracks if typist is burnt out or not
     private int burnOutTurnsRemaining = 0; // number of turns of burnout remaining
 
-     private double oldAccuracy = 0; // records typist initial accuaracy before game starts
+    private double oldAccuracy = 0; // records typist initial accuaracy before game starts
+    private boolean gotBurntOut = false; //(if typist ever burns out in game; when game is over, this value helps determine if typist loses accuracy)
+
 
     // Constructor of class Typist
     /**
@@ -135,6 +137,14 @@ public class Typist
     }
 
     /**
+     * Returns the boolean value if the typist has ever burns out in the race
+     */
+    public boolean getGotBurntOut() //accessor
+    {
+        return gotBurntOut;
+    }
+
+    /**
      * Returns the number of turns of burnout remaining.
      * Returns 0 if the typist is not currently burnt out.
      *
@@ -158,6 +168,7 @@ public class Typist
 
         burntOutState = false;
         burnOutTurnsRemaining = 0;
+        gotBurntOut = false;
     }
 
     /**
@@ -170,6 +181,7 @@ public class Typist
         if (!burntOutState){
             return false;
         }
+        gotBurntOut = true; //set gotBurntOut to true, so when game finishes, this value determines accuaracy deduction
         return true;
     }
 
