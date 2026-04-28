@@ -28,11 +28,14 @@ public class Typist2
     private int typistProgress; // tracks how far along the passage
     private boolean burntOutState; // tracks if typist is burnt out or not
     private int burnOutTurnsRemaining = 0; // number of turns of burnout remaining
+    private double typistWPM; // tracks typist's WPM
+    private double bestWPM = 0.0; // records personal best
 
     private int totalwins = 0;
 
     private int progressBeforeSlideBack = 0; // typist's progress before slideback
     private double oldAccuracy = 0; // records typist initial accuaracy before game starts
+    private double oldBestWPM = 0.0; // record old personal best
     private boolean gotBurntOut = false; //(if typist ever burns out in game; when game is over, this value helps determine if typist loses accuracy)
 
     private ArrayList<RaceHistory> history = new ArrayList<>(); // history list that stores each frame of the race
@@ -53,6 +56,7 @@ public class Typist2
         this.typistAccuracy = typistAccuracy;
 
         oldAccuracy = typistAccuracy;
+        oldBestWPM = bestWPM;
     }
 
 
@@ -148,6 +152,26 @@ public class Typist2
     public int getProgressBeforeSlideBack() 
     {
         return progressBeforeSlideBack;
+    }
+
+    /**
+     * Returns the WPM of the typist.
+     *
+     * @return the typist's WPM as a non-negative
+     */
+    public double getWPM() // accessor
+    {
+        return typistWPM;
+    }
+
+    /**
+     * Returns the previous best WPM of the typist.
+     *
+     * @return the typist's previous personal best wpm as a non-negative
+     */
+    public double getOldBestWPM() // accessor
+    {
+        return oldBestWPM;
     }
 
     /**

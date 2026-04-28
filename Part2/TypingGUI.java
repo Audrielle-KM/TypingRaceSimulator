@@ -458,6 +458,157 @@ public class TypingGUI
     }
 
     /**
+     * Creates a single typist's lane of the finished race
+     * 
+     * @param race a snapshot of the race
+     * @param theTypist the typist
+     * @return the lane (row)
+     */
+    private static JPanel createBarReplay(RaceHistory race, Typist2 theTypist)
+    {
+        int index = typists.indexOf(theTypist);
+
+        JPanel row = new JPanel(new GridBagLayout());
+        row.setPreferredSize(new Dimension(200,20));
+        GridBagConstraints g = new GridBagConstraints();
+        g.gridy = 0;
+        g.fill = GridBagConstraints.HORIZONTAL;
+
+        String passage = "|";
+
+        JTextArea seat = bars.get(index);
+        seat.setEditable(false);
+        seat.setLineWrap(true);
+        seat.setWrapStyleWord(true);
+        seat.setForeground(progressBarColourSet);
+        seat.setBounds(0, 0, passageLength, 10);
+
+        g.weightx = 1;
+        g.gridx = 0;
+        row.add(seat, g);
+
+        int spacesBefore = race.getPosition();
+        int spacesAfter  = passageLength - race.getPosition();
+
+
+        passage += multiplePrint('◉', spacesBefore);
+        seat.setText(passage);
+
+        // Always show the typist's symbol so they can be identified on screen.
+        // Append ◌ when burnt out so the state is visible without hiding identity.
+        passage += theTypist.getSymbol();
+        seat.setText(passage);
+        if (race.getBurnoutstate())
+        {
+            passage += "◌";
+            seat.setText(passage);
+            spacesAfter--; // symbol + ◌ together take two characters
+        }
+
+        if (!race.getBurnoutstate() && race.getSlidebackposition() > race.getPosition()) {
+
+            String s = "◍";
+            passage += s;
+            seat.setText(passage);
+            spacesAfter--;
+        }
+
+        passage += multiplePrint('○', spacesAfter);
+        passage += "⚑";
+        passage += " ";
+        seat.setText(passage);
+
+        g.gridx = 1;
+        g.weightx = 0.3;
+        String info = theTypist.getName()
+                + " (WPM: " + race.getWPM() + ")"
+                + " (Accuracy: " + race.getAccuracy() +")";
+        JTextArea typistInfo  = typiststatus.get(index);
+        typistInfo.setEditable(false);
+        typistInfo.setLineWrap(true);
+        typistInfo.setWrapStyleWord(true);
+        typistInfo.setText(info);
+        row.add(typistInfo, g);
+
+        return row;
+    }
+
+    /**
+     * Updating the single typist's lane of the finished race
+     * @param race a snippet of the race
+     * @param theTypist the typist
+     */
+    private static void updateBarReplay(RaceHistory race, Typist2 theTypist)
+    {
+        int index = typists.indexOf(theTypist);
+        JTextArea seat = bars.get(index);
+        JTextArea typistInfo = typiststatus.get(index);
+
+        int spacesBefore = race.getPosition();
+        int spacesAfter  = passageLength - race.getPosition();
+
+        String passage = "|";
+
+        passage += multiplePrint('◉', spacesBefore);
+        seat.setText(passage);
+
+        // Always show the typist's symbol so they can be identified on screen.
+        // Append ◌ when burnt out so the state is visible without hiding identity.
+        passage += theTypist.getSymbol();
+        seat.setText(passage);
+        if (race.getBurnoutstate())
+        {
+            passage += "◌";
+            seat.setText(passage);
+            spacesAfter--; // symbol + ◌ together take two characters
+        }
+
+        if (!race.getBurnoutstate() && race.getSlidebackposition() > race.getPosition()) {
+            seat.setText(passage);
+
+            String s = "◍";
+            passage += s;
+            seat.setText(passage);
+            spacesAfter--;
+        }
+
+        passage += multiplePrint('○', spacesAfter);
+        passage += "⚑";
+        passage += " ";
+        seat.setText(passage);
+
+        String info = theTypist.getName()
+                + " (WPM: " + race.getWPM() + ")"
+                + " (Accuracy: " + race.getAccuracy() +")";
+
+        //Print name and accuracy
+        if (race.getBurnoutstate()) // if burnt out
+        {
+
+            info = theTypist.getName()
+                + " (WPM: " + race.getWPM() + ")"
+                + " (Accuracy: " + race.getAccuracy() +")"
+                + " ←  BURNT OUT";
+        }
+        else if (!race.getBurnoutstate() && race.getSlidebackposition() > race.getPosition()) // if mistypes
+        {
+           info = theTypist.getName()
+                + " (WPM: " + race.getWPM() + ")"
+                + " (Accuracy: " + race.getAccuracy() +")"
+                + "  ← just mistyped";
+        }
+        else // neither burnt out nor mistyped
+        {
+           info = theTypist.getName()
+                + " (WPM: " + race.getWPM() + ")"
+                + " (Accuracy: " + race.getAccuracy() +")";
+        }
+        typistInfo.setText(info);
+        
+        
+    }
+
+    /**
      * Creating and updating the lanes for each typist to display full race history over time
      * 
      * @param index the given time the user wants to view from the race
@@ -474,6 +625,7 @@ public class TypingGUI
 
                 RaceHistory race = theTypist.getHistory().get(index);
                 
+                historyPanel.add(createBarReplay(race, theTypist));
             }
         }
         else // if page is set up already
@@ -485,6 +637,7 @@ public class TypingGUI
 
                 RaceHistory race = theTypist.getHistory().get(index);
                 
+               updateBarReplay(race, theTypist);
             }
         }
 
