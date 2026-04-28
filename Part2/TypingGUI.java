@@ -28,7 +28,8 @@ public class TypingGUI
     private Typist seat1Typist;
     private Typist seat2Typist;
     private Typist seat3Typist;
-    private Typist winnerTypist;
+    private static int numberOfTypists = 0;
+    private static Typist winnerTypist;
 
     // Accuracy thresholds for mistype and burnout events
     // (Ty tuned these values "by feel". They may need adjustment.)
@@ -534,6 +535,33 @@ public class TypingGUI
                 setLengthButton.setText("Set");
                 customLengthTextField.setText("Invalid number!");
                 customLengthTextField.setEditable(false);
+            }
+        });
+
+        JLabel seatCountText = new JLabel("Seat Count:");
+        seatCountText.setBounds(37, 179, 106, 18);
+        seatCountText.setFont(new Font("Arial", Font.PLAIN,  14));
+        seatCountText.setForeground(Color.decode("#1b1b1b"));
+        mainPanel.add(seatCountText);
+
+        Integer[] seats = {2,3,4,5,6};
+        seatsOption = new JComboBox<Integer>(seats);
+        seatsOption.setSelectedItem(2);
+        seatsOption.setBounds(35, 71, 100, 21);
+        seatsOption.setLocation(37,210);
+        mainPanel.add(seatsOption);
+
+        numberOfSeatsText = new JLabel(seatsOption.getSelectedItem().toString() + "🗸");
+        numberOfSeatsText.setBounds(150, 210, 106, 18);
+        numberOfSeatsText.setForeground(Color.decode("#1b1b1b"));
+        mainPanel.add(numberOfSeatsText);
+
+        seatsOption.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                numberOfSeatsText.setText(seatsOption.getSelectedItem().toString() + "🗸");
+                numberOfTypists = Integer.parseInt(seatsOption.getSelectedItem().toString());
             }
         });
     }
