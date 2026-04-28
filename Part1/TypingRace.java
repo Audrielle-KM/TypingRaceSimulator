@@ -107,7 +107,49 @@ public class TypingRace
             } catch (Exception e) {}
         }
 
-        // TODO (Task 2a): Print the winner's name here
+        /**
+         * if finished is true
+         * each competitor is checked if they have ever been burnt out mid-race and their accuracy is deducted by 0.02.
+         * the winner's accuracy is improved by 0.04.
+         * The winner's name is called out and their final accuracy is announced 
+         * followed by how much it has improved/reduced/no changes from their old accuracy
+         * 
+         */
+
+       if (finished) 
+        {
+
+            if (seat1Typist.getGotBurntOut())
+            {
+                seat1Typist.setAccuracy(seat1Typist.getAccuracy() - 0.02);
+            }
+            if (seat2Typist.getGotBurntOut())
+            {
+                seat2Typist.setAccuracy(seat2Typist.getAccuracy() - 0.02);
+            }
+            if (seat3Typist.getGotBurntOut())
+            {
+                seat3Typist.setAccuracy(seat3Typist.getAccuracy() - 0.02);
+            }
+
+            winnerTypist.setAccuracy(winnerTypist.getAccuracy() + 0.04);
+            System.out.println("And the winner is..." + winnerTypist.getName());
+
+            String winnerOldAccuracy = String.format("%.2f", winnerTypist.getOldAccuracy()); // 2 dp for consistency
+
+            if (winnerTypist.getAccuracy() > winnerTypist.getOldAccuracy()) 
+            {
+                System.out.println("Final accuracy: " + winnerTypist.getAccuracy() + " (improved from " + winnerOldAccuracy + ")" );
+            }
+            else if (winnerTypist.getAccuracy() == winnerTypist.getOldAccuracy() )
+            {
+                System.out.println("Final accuracy: " + winnerTypist.getAccuracy() + " (no changes from  " + winnerOldAccuracy + ")" );
+            }
+            else 
+            {
+                System.out.println("Final accuracy: " + winnerTypist.getAccuracy() + " (reduced from " + winnerOldAccuracy + ")" );
+            }
+        }
     }
 
     /**
