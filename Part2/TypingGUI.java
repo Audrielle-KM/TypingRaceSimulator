@@ -51,6 +51,8 @@ public class TypingGUI
     static JComboBox<String> keyboardType;
     static JComboBox<String> symbolOption;
 
+    static Color progressBarColourSet; // Stores RGB colour of progress bar
+
     // GUI components that text values will be used across the program
     static JLabel selectedLength;
     static JLabel numberOfSeatsText;
@@ -398,6 +400,47 @@ public class TypingGUI
             System.out.print(aChar);
             i = i + 1;
         }
+    }
+
+    /**
+     * Returns the closest simple colour name from given RGB colour
+     * @param colour
+     * @return the Colour name and its brightness if given
+     */
+    public static String getColourName(Color colour)
+    {
+        int r = colour.getRed();
+        int g = colour.getGreen();
+        int b = colour.getBlue();
+
+        int colourBrightness = r + g + b;
+        String brightness = "";
+
+        if (colourBrightness < 100) {
+            brightness = "Dark ";
+        }
+        else if (colourBrightness > 600){
+            brightness = "Light ";
+        }
+
+        if (r > g && r > b) {
+            return brightness + "Red";}
+        else if (g > r && g > b) {
+            return brightness + "Green";}
+        else if (b > r && b > g) {
+            return "Blue";}
+
+        else if (r == g && r > b) {
+            return brightness + "Yellow";
+        }
+        else if (r == b && r > g) {
+            return brightness+ "Purple";
+        }
+        else if (g == b && g > r) {
+            return brightness + "Cyan";
+        }
+
+        return brightness + "Grey";
     }
 
     /**
@@ -840,5 +883,15 @@ public class TypingGUI
         colourChangeButton.setFont(new Font("Arial", Font.PLAIN, 14));
         colourChangeButton.setFocusPainted(false);
         customisationPanel.add(colourChangeButton);
+
+        colourChangeButton.addActionListener(e ->{
+            progressBarColourSet = JColorChooser.showDialog(null, "Pick a Colour", Color.WHITE);
+            setOnClickColour(colourChangeButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+            
+            if (progressBarColourSet != null)
+            {
+                colourChangeButton.setText("Selected Colour: " + getColourName(progressBarColourSet));
+            }
+        });
     }
 }
