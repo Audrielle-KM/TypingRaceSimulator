@@ -56,7 +56,11 @@ public class Typist
      */
     public void burnOut(int turns)
     {
-
+        if (turns > 0 && !burntOutState) {
+            burntOutState = true;
+            burnOutTurnsRemaining = turns;
+        }
+        
     }
 
     /**
@@ -66,7 +70,13 @@ public class Typist
      */
     public void recoverFromBurnout()
     {
+        if (burntOutState) { //if currently burnt out
+            burnOutTurnsRemaining -= 1;
 
+            if (burnOutTurnsRemaining == 0) {
+                burntOutState = false;
+            }
+        }
     }
 
     /**
@@ -74,9 +84,9 @@ public class Typist
      *
      * @return accuracy as a double between 0.0 and 1.0
      */
-    public double getAccuracy()
+    public double getAccuracy() // accessor
     {
-        return 0.0; // placeholder - replace with correct implementation
+        return typistAccuracy;
     }
 
     /**
@@ -86,9 +96,9 @@ public class Typist
      *
      * @return progress as a non-negative integer
      */
-    public int getProgress()
+    public int getProgress() // accessor
     {
-        return 0; // placeholder - replace with correct implementation
+        return Math.abs(typistProgress);
     }
 
     /**
@@ -96,9 +106,9 @@ public class Typist
      *
      * @return the typist's name as a String
      */
-    public String getName()
+    public String getName() // accessor
     {
-        return ""; // placeholder - replace with correct implementation
+        return typistName;
     }
 
     /**
@@ -106,9 +116,9 @@ public class Typist
      *
      * @return the typist's symbol as a char
      */
-    public char getSymbol()
+    public char getSymbol() // accessor
     {
-        return ' '; // placeholder - replace with correct implementation
+        return typistSymbol;
     }
 
     /**
@@ -117,9 +127,12 @@ public class Typist
      *
      * @return burnout turns remaining as a non-negative integer
      */
-    public int getBurnoutTurnsRemaining()
+    public int getBurnoutTurnsRemaining() //accessor
     {
-        return 0; // placeholder - replace with correct implementation
+        if (!burntOutState) {
+            return 0;
+        }
+        return Math.abs(burnOutTurnsRemaining);
     }
 
     /**
