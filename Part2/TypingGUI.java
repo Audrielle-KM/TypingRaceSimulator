@@ -87,28 +87,62 @@ public class TypingGUI
     }
 
     /**
-     * Seats a typist at the given seat number (1, 2, or 3).
+     * Returns the type integer unicode for the symbols set by the user
+     * 
+     * @return unicode symbol code
+     */
+    private static int getUnicodeSymbol()
+    {
+        int unicode = 0x2460;
+        if (symbolOption.getSelectedItem().toString().equals("①②③"))
+        {
+            unicode = 0x2460;
+        }
+        else if (symbolOption.getSelectedItem().toString().equals("⑴⑵⑶"))
+        {
+            unicode = 0x2474;
+        }
+        else if (symbolOption.getSelectedItem().toString().equals("⓵⓶⓷"))
+        {
+            unicode = 0x24F5;
+        }
+        else if (symbolOption.getSelectedItem().toString().equals("♠♢♣♡"))
+        {
+            unicode = 0x2660;
+        }
+        else if (symbolOption.getSelectedItem().toString().equals("♳♴♵"))
+        {
+            unicode = 0x2673;
+        }
+        else if (symbolOption.getSelectedItem().toString().equals("⚀⚁⚂"))
+        {
+            unicode = 0x2680;
+        }
+
+        return unicode;
+    }
+
+    /**
+     * Seats a typist and give a random initial accuracy from 0.10 - 0.50
      *
      * @param theTypist  the typist to seat
-     * @param seatNumber the seat to place them in (1–3)
+     * @param unicode the unicode symbol
      */
-    public void addTypist(Typist theTypist, int seatNumber)
+    public static void addTypist(int unicode)
     {
-        if (seatNumber == 1)
+        for (Typist2 typist : typists)
         {
-            seat1Typist = theTypist;
+            typist.setSymbol((char) (unicode + typists.indexOf(typist)));
         }
-        else if (seatNumber == 2)
+
+        while (typists.size() < numberOfTypists)
         {
-            seat2Typist = theTypist;
+            double accuracy = Math.round((0.10 + Math.random()* 0.50) * 100) / 100.0; //2dp for consistency
+            typists.add(new Typist2((char) (unicode + typists.size()), "N/A", accuracy));
         }
-        else if (seatNumber == 3)
+        while (typists.size() > numberOfTypists)
         {
-            seat3Typist = theTypist;
-        }
-        else
-        {
-            System.out.println("Cannot seat typist at seat " + seatNumber + " — there is no such seat.");
+            typists.remove(typists.size() - 1);
         }
     }
 
