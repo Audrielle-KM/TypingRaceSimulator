@@ -30,6 +30,7 @@ public class Typist2
     private int burnOutTurnsRemaining = 0; // number of turns of burnout remaining
     private int mistypes; // number of mistypes during the race
     private int burnouts; // number of burnouts the typist burnt out during the race
+    private int points; // number of points typist has gained overtime;
     private double typistWPM; // tracks typist's WPM
     private double bestWPM = 0.0; // records personal best
 
@@ -42,6 +43,7 @@ public class Typist2
     private double oldBestWPM = 0.0; // record old personal best
     private boolean gotBurntOut = false; //(if typist ever burns out in game; when game is over, this value helps determine if typist loses accuracy)
 
+    private int races_completed = 0;
     private ArrayList<RaceHistory> history = new ArrayList<>(); // history list that stores each frame of the race
     private ArrayList<String> badges = new ArrayList<>(); // badge list of all badges earned by typist
 
@@ -239,7 +241,7 @@ public class Typist2
     {
         return bestWPM;
     }
-    
+
     /**
      * Returns the character symbol used to represent this typist.
      *
@@ -283,6 +285,26 @@ public class Typist2
     }
 
     /**
+     * Returns the number of points typist has obtained.
+     *
+     * @return the typist's number of points
+     */
+    public int getPoints() //accessor
+    {
+       return points;
+    }
+
+    /**
+     * Returns the number of wins typist has achieved.
+     *
+     * @return the typist's number of wins
+     */
+    public int getWins() //accessor
+    {
+       return totalwins;
+    }
+
+    /**
      * Returns the number of burnouts typist has gotten during the race.
      *
      * @return the typist's number of burnouts
@@ -300,6 +322,16 @@ public class Typist2
     public int getTotalBurnouts() //accessor
     {
        return totalburnouts;
+    }
+
+    /**
+     * Returns the number of races the typist has competed
+     *
+     * @return the typist's number of races completed
+     */
+    public int getRacesCompleted() //accessor
+    {
+       return races_completed;
     }
     
     /**
@@ -440,6 +472,31 @@ public class Typist2
     {
         typistName = newName;
 
+    }
+
+    /**
+     * Adds points to typist's score
+     *
+     * @param amount how much points typist has gained
+     * 
+     * values below 0 should be set to 0
+     */
+    public void setPoints(int amount) // mutator
+    {
+        points += amount;
+        if (points < 0)
+        {
+            points = 0;
+        }
+    }
+
+    /**
+     * Adds the number of races typist has completed by 1
+     *
+     */
+    public void addCompletedRaces() // mutator
+    {
+        races_completed++;
     }
 
 
