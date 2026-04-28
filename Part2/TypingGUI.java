@@ -24,6 +24,7 @@ public class TypingGUI
 
     private static CardLayout layout; // Allows flipping through each page/section of GUI
     private static JPanel card;
+    private static ArrayList<Typist2> typists = new ArrayList<>();
 
     private Typist seat1Typist;
     private Typist seat2Typist;
@@ -441,6 +442,50 @@ public class TypingGUI
         }
 
         return brightness + "Grey";
+    }
+
+    /**
+     * Creates a new window that lists the seated typists and allow user to change their names
+     * If left empty, window closes and a new window appears that says a "Name cannot be empty"
+     */
+    public static void changeTypistsNames()
+    {
+        JDialog dialog = new JDialog((JFrame) null, "Set Typists Names", true);
+        dialog.setLayout(new BorderLayout());
+
+        JPanel list = new JPanel();
+        list.setLayout(new GridLayout(numberOfTypists, 1));
+
+        JTextField[] fields = new JTextField[typists.size()];
+        for (int t = 0; t < typists.size(); t++)
+        {
+            fields[t] = new JTextField(typists.get(t).getName());
+            list.add(fields[t]);
+        }
+
+        JButton confirmButton = new JButton("Confirm");
+        confirmButton.addActionListener(ee -> {
+
+            for (int i = 0; i < numberOfTypists; i++)
+            {
+                if (!fields[i].getText().trim().isEmpty())
+                {
+                    typists.get(i).setName(fields[i].getText());
+
+                }
+                else {JOptionPane.showMessageDialog(dialog, "Name cannot be empty!");}
+            }
+            dialog.dispose();
+        });
+
+        JScrollPane scroll = new JScrollPane(list);
+
+        dialog.add(scroll, BorderLayout.CENTER);
+        dialog.add(confirmButton, BorderLayout.SOUTH);
+
+        dialog.pack();
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
     }
 
     /**
@@ -892,6 +937,25 @@ public class TypingGUI
             {
                 colourChangeButton.setText("Selected Colour: " + getColourName(progressBarColourSet));
             }
+        });
+
+         JLabel setTypistNameText = new JLabel("Set Typists Names:");
+        setTypistNameText.setBounds(197, 210, 141, 18);
+        setTypistNameText.setFont(new Font("Arial", Font.PLAIN, 14));;
+        setTypistNameText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(setTypistNameText);
+
+        JButton setNameButton = new JButton("Set");
+        setNameButton.setBounds(197, 230, 200, 30);
+        setNameButton.setBackground(Color.decode("#ffffff"));
+        setNameButton.setForeground(Color.decode("#1b1b1b"));
+        setNameButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        setNameButton.setFocusPainted(false);
+        customisationPanel.add(setNameButton);
+
+        setNameButton.addActionListener(e ->{
+            setOnClickColour(setNameButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+            changeTypistsNames();
         });
     }
 }

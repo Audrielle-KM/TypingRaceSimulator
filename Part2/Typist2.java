@@ -253,4 +253,15 @@ public class Typist2
 
     }
 
+    /**
+     * Sets the typist's name
+     *
+     * @param newName the new name string
+     */
+    public void setName(String newName) // mutator
+    {
+        typistName = newName;
+
+    }
+
 }
