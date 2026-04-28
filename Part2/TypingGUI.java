@@ -32,10 +32,17 @@ public class TypingGUI
     private static Typist winnerTypist;
 
     // Accuracy thresholds for mistype and burnout events
-    // (Ty tuned these values "by feel". They may need adjustment.)
     private static final double MISTYPE_BASE_CHANCE = 0.3;
     private static final int    SLIDE_BACK_AMOUNT   = 2;
     private static final int    BURNOUT_DURATION     = 3;
+    //Wait 200ms between turns so the animation is visible
+    private static final int SPEED = 200;
+
+    // Updated accuracy thresholds after applying with difficulty modifiers and accessories for mistype and burnout events
+    private static double NEW_MISTYPE_CHANCE = MISTYPE_BASE_CHANCE;
+    private static int NEW_SLIDE_BACK = SLIDE_BACK_AMOUNT;
+    private static int NEW_BURNOUT_DURATION = BURNOUT_DURATION;
+    private static int NEW_SPEED = SPEED;
 
     // Dropdown list that holds values for passagelength & number of seats
     static JComboBox<String> lengthOption;
@@ -749,6 +756,62 @@ public class TypingGUI
                 {
                     
                     stylesInfo.setText("+" + "0.5" + " accuracy rating; " + "+0.09 burnout risk");
+                }
+            }
+        });
+
+        JLabel keyboardTypeText = new JLabel("Keyboard Type:");
+        keyboardTypeText.setBounds(16, 150, 106, 18);
+        keyboardTypeText.setFont(new Font("Arial", Font.PLAIN, 14));
+        keyboardTypeText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(keyboardTypeText);
+
+        String keyboard[] = {"Mechanical", "Membrane", "Touchscreen", "Stenography"};
+        keyboardType = new JComboBox<String>(keyboard);
+        keyboardType.setBounds(20, 185, 112, 21);
+        customisationPanel.add(keyboardType);
+
+        keyboardInfo = new JTextArea("normal speed" + "; " + "+" + Math.round(MISTYPE_BASE_CHANCE * 100.0) / 100.0 +" mistype chance");
+        keyboardInfo.setBounds(16, 208, 106, 18);
+        keyboardInfo.setFont(new Font("Arial", Font.PLAIN, 8));
+        keyboardInfo.setForeground(Color.decode("#2bc36b"));
+        keyboardInfo.setLineWrap(true);
+        keyboardInfo.setWrapStyleWord(true);
+        keyboardInfo.setEditable(false);
+        customisationPanel.add(keyboardInfo);
+
+        keyboardType.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                int speedChange = 0;
+                double mistypeChance = 0;
+        
+
+                if (keyboardType.getSelectedItem().toString().equals("Mechanical"))
+                {
+                    keyboardInfo.setText( "normal speed" + "; " + "+" + Math.round(MISTYPE_BASE_CHANCE * 100.0) / 100.0 +" mistype chance");
+                }
+                else if (keyboardType.getSelectedItem().toString().equals("Membrane"))
+                {
+                    speedChange += 30;
+
+                    mistypeChance += 0.3;
+                    keyboardInfo.setText("-" + speedChange + "ms; " + "+" + Math.round((NEW_MISTYPE_CHANCE - mistypeChance)* 100.0) / 100.0 +" mistype chance");
+                }
+                else if (keyboardType.getSelectedItem().toString().equals("Touchscreen"))
+                {
+                    speedChange += 35;
+
+                    mistypeChance += 0.35;
+                    keyboardInfo.setText("+" + speedChange + "ms; " + "+" + Math.round((NEW_MISTYPE_CHANCE + mistypeChance)* 100.0) / 100.0 +" mistype chance");
+                }
+                else
+                {
+                    speedChange += 10;
+
+                    mistypeChance += 0.1;
+                    keyboardInfo.setText("-" + speedChange + "ms; " + "+" + Math.round((NEW_MISTYPE_CHANCE - mistypeChance)* 100.0) / 100.0 +" mistype chance");
                 }
             }
         });
