@@ -141,7 +141,10 @@ public class Typist
      */
     public void resetToStart()
     {
+        typistProgress = 0;
 
+        burntOutState = false;
+        burnOutTurnsRemaining = 0;
     }
 
     /**
@@ -151,7 +154,10 @@ public class Typist
      */
     public boolean isBurntOut()
     {
-        return false; // placeholder - replace with correct implementation
+        if (!burntOutState){
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -160,6 +166,9 @@ public class Typist
      */
     public void typeCharacter()
     {
+        if (!burntOutState) {
+            typistProgress += 1;
+        }
 
     }
 
@@ -171,6 +180,10 @@ public class Typist
      */
     public void slideBack(int amount)
     {
+        typistProgress -= Math.abs(amount);
+        if (typistProgress < 0) {
+            typistProgress = 0;
+        }
 
     }
 
@@ -180,8 +193,17 @@ public class Typist
      *
      * @param newAccuracy the new accuracy rating
      */
-    public void setAccuracy(double newAccuracy)
+    public void setAccuracy(double newAccuracy) // mutator
     {
+        if (newAccuracy < 0.0) {
+            typistAccuracy = 0.0;
+        }
+        else if (newAccuracy > 1.0) {
+            typistAccuracy = 1.0;
+        }
+        else {
+            typistAccuracy = Math.round(newAccuracy * 100.0) / 100.0; // 2dp for consistency
+        }
 
     }
 
@@ -190,8 +212,9 @@ public class Typist
      *
      * @param newSymbol the new symbol character
      */
-    public void setSymbol(char newSymbol)
+    public void setSymbol(char newSymbol) // mutator
     {
+        typistSymbol = newSymbol;
 
     }
 
