@@ -63,6 +63,9 @@ public class TypingGUI
     static JButton autocorrectButton;
     static JButton nightShiftButton;
     static JButton caffeineButton;
+    static JButton wristSupportButton;
+    static JButton energyDrinkButton;
+    static JButton noiseCHButton;
 
     /**
      * Sets the passage length (Short, Medium, Long) [not Custom - different method]
@@ -957,5 +960,128 @@ public class TypingGUI
             setOnClickColour(setNameButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
             changeTypistsNames();
         });
+        //Accessories (Customisation Section)
+        JLabel accessoriesLabel = new JLabel("Accessories");
+        accessoriesLabel.setBounds(475, 50, 147, 21);
+        accessoriesLabel.setFont(new Font("Arial", Font.BOLD,  14));
+        accessoriesLabel.setForeground(Color.decode("#434343"));
+        customisationPanel.add(accessoriesLabel);
+
+        wristSupportButton = new JButton("OFF");
+        wristSupportButton.setBounds(536, 66, 106, 30);
+        wristSupportButton.setBackground(Color.decode("#eb3251"));
+        wristSupportButton.setForeground(Color.decode("#1b1b1b"));
+        wristSupportButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        wristSupportButton.setFocusPainted(false);
+        customisationPanel.add(wristSupportButton);
+
+        wristSupportButton.addActionListener(e -> {
+            if (wristSupportButton.getText().toString().equals("ON"))
+            {
+                wristSupportButton.setBackground(Color.decode("#dd3333"));
+                wristSupportButton.setText("OFF");
+                
+            }
+            else
+            {
+                wristSupportButton.setBackground(Color.decode("#33dd8a"));
+                wristSupportButton.setText("ON");
+            }
+        });
+
+        noiseCHButton = new JButton("OFF");
+        noiseCHButton.setBounds(535, 124, 106, 30);
+        noiseCHButton.setBackground(Color.decode("#eb3251"));
+        noiseCHButton.setForeground(Color.decode("#1b1b1b"));
+        noiseCHButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        noiseCHButton.setFocusPainted(false);
+        customisationPanel.add(noiseCHButton);
+
+        noiseCHButton.addActionListener(e -> {
+            if (noiseCHButton.getText().toString().equals("ON"))
+            {
+                noiseCHButton.setBackground(Color.decode("#dd3333"));
+                noiseCHButton.setText("OFF");
+                
+            }
+            else
+            {
+                noiseCHButton.setBackground(Color.decode("#33dd8a"));
+                noiseCHButton.setText("ON");
+            }
+        });
+
+        energyDrinkButton = new JButton("OFF");
+        energyDrinkButton.setBounds(535, 177, 106, 30);
+        energyDrinkButton.setBackground(Color.decode("#eb3251"));
+        energyDrinkButton.setForeground(Color.decode("#1b1b1b"));
+        energyDrinkButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        energyDrinkButton.setFocusPainted(false);
+        customisationPanel.add(energyDrinkButton);
+
+        energyDrinkButton.addActionListener(e -> {
+            if (energyDrinkButton.getText().toString().equals("ON"))
+            {
+                energyDrinkButton.setBackground(Color.decode("#dd3333"));
+                energyDrinkButton.setText("OFF");
+                
+            }
+            else
+            {
+                energyDrinkButton.setBackground(Color.decode("#33dd8a"));
+                energyDrinkButton.setText("ON");
+            }
+        });
+
+        JTextArea wristSupportInfoText = new JTextArea("Reduce burnout duration");
+        wristSupportInfoText.setBounds(539, 104, 106, 18);
+        wristSupportInfoText.setFont(new Font("Arial", Font.PLAIN, 8));
+        wristSupportInfoText.setForeground(Color.decode("#1b1b1b"));
+        wristSupportInfoText.setLineWrap(true);
+        wristSupportInfoText.setWrapStyleWord(true);
+        wristSupportInfoText.setEditable(false);
+        customisationPanel.add(wristSupportInfoText);
+
+        JTextArea energyDrinkInfoText = new JTextArea("Increase accuracy for the first half of the race, decrease it in the second half");
+        energyDrinkInfoText.setBounds(537, 211, 104, 39);
+        energyDrinkInfoText.setFont(new Font("Arial", Font.PLAIN, 8));
+        energyDrinkInfoText.setForeground(Color.decode("#1b1b1b"));
+        energyDrinkInfoText.setLineWrap(true);
+        energyDrinkInfoText.setWrapStyleWord(true);
+        energyDrinkInfoText.setEditable(false);
+        customisationPanel.add(energyDrinkInfoText);
+
+        JTextArea noiseCHInfoText = new JTextArea("Reduce the chance of a mistype");
+        noiseCHInfoText.setBounds(539, 156, 106, 18);
+        noiseCHInfoText.setFont(new Font("Arial", Font.PLAIN, 8));
+        noiseCHInfoText.setForeground(Color.decode("#1b1b1b"));
+        noiseCHInfoText.setLineWrap(true);
+        noiseCHInfoText.setWrapStyleWord(true);
+        noiseCHInfoText.setEditable(false);
+        customisationPanel.add(noiseCHInfoText);
+
+        JLabel wristSupportText = new JLabel("Wrist Support:");
+        wristSupportText.setBounds(416, 69, 106, 18);
+        wristSupportText.setFont(new Font("Arial", Font.PLAIN, 14));
+        wristSupportText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(wristSupportText);
+
+        JLabel noiseCText = new JLabel("Noise-Cancelling");
+        noiseCText.setBounds(416, 122, 130, 37);
+        noiseCText.setFont(new Font("Arial", Font.PLAIN, 14));;
+        noiseCText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(noiseCText);
+
+        JLabel noiseHText = new JLabel("Headphones:");
+        noiseHText.setBounds(416, 140, 130, 37);
+        noiseHText.setFont(new Font("Arial", Font.PLAIN, 14));;
+        noiseHText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(noiseHText);
+
+        JLabel energyDrinkText = new JLabel("Energy Drink:");
+        energyDrinkText.setBounds(416, 185, 106, 18);
+        energyDrinkText.setFont(new Font("Arial", Font.PLAIN, 14));
+        energyDrinkText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(energyDrinkText);
     }
 }
