@@ -27,6 +27,7 @@ public class Typist
     private boolean burntOutState; // tracks if typist is burnt out or not
     private int burnOutTurnsRemaining = 0; // number of turns of burnout remaining
 
+     private double oldAccuracy = 0; // records typist initial accuaracy before game starts
 
     // Constructor of class Typist
     /**
@@ -43,6 +44,7 @@ public class Typist
         this.typistSymbol = typistSymbol;
         this.typistAccuracy = typistAccuracy;
 
+        oldAccuracy = typistAccuracy;
     }
 
 
@@ -88,6 +90,17 @@ public class Typist
     {
         return typistAccuracy;
     }
+
+    /**
+     * Returns the typist's accuracy before its changes after the race is over.
+     * 
+     * @return accuracy as a double between 0.0 and 1.0
+     */
+    public double getOldAccuracy()
+    {
+        return oldAccuracy;
+    }
+
 
     /**
      * Returns the typist's current progress through the passage.
