@@ -256,6 +256,7 @@ public class TypingRace
     {
         int spacesBefore = theTypist.getProgress();
         int spacesAfter  = passageLength - theTypist.getProgress();
+        String typistAccuracy = String.format("%.2f", theTypist.getAccuracy()); // for consistent formatting
 
         System.out.print('|');
         multiplePrint(' ', spacesBefore);
@@ -269,21 +270,57 @@ public class TypingRace
             spacesAfter--; // symbol + ~ together take two characters
         }
 
+        if (!theTypist.isBurntOut() && theTypist.getProgressBeforeSlideBack() > theTypist.getProgress()) {
+            spacesAfter -= 1; // symbol take 1 char
+            int gapsBetweenSymbol = theTypist.getProgressBeforeSlideBack() - theTypist.getProgress(); // distance from when slide back occured and current progress
+            
+            int gapsAfter = gapsBetweenSymbol + 2; // num chars covered when slide back occured + [<]
+            multiplePrint(' ', gapsBetweenSymbol);
+            
+            String s = "[";
+            if (gapsAfter > spacesAfter) // detects if '[<]' goes beyond finishline and fixes printing positioning
+            {
+                int distance = gapsAfter - spacesAfter;
+                if (distance < 2)
+                {
+                    s += "<";
+                    System.out.print(s);
+                }
+                else
+                {
+                    System.out.print(s);
+                }
+            }
+            else
+            {
+                s += "<]";
+                System.out.print(s);
+            }
+            spacesAfter -= gapsAfter;
+        }
+
         multiplePrint(' ', spacesAfter);
         System.out.print('|');
         System.out.print(' ');
 
         // Print name and accuracy
-        if (theTypist.isBurntOut())
+        if (theTypist.isBurntOut()) // if burnt out
         {
+
             System.out.print(theTypist.getName()
-                + " (Accuracy: " + theTypist.getAccuracy() + ")"
+                + " (Accuracy: " +typistAccuracy + ")"
                 + " BURNT OUT (" + theTypist.getBurnoutTurnsRemaining() + " turns)");
         }
-        else
+        else if (!theTypist.isBurntOut() && theTypist.getProgressBeforeSlideBack() > theTypist.getProgress()) // if mistypes
         {
             System.out.print(theTypist.getName()
-                + " (Accuracy: " + theTypist.getAccuracy() + ")");
+                + " (Accuracy: " + typistAccuracy + ")"
+                + "  ← just mistyped");
+        }
+        else // neither burnt out nor mistyped
+        {
+            System.out.print(theTypist.getName()
+                + " (Accuracy: " + typistAccuracy + ")");
         }
     }
 
