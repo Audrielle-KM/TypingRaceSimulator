@@ -39,6 +39,9 @@ public class Typist
      */
     public Typist(char typistSymbol, String typistName, double typistAccuracy)
     {
+        this.typistName = typistName; 
+        this.typistSymbol = typistSymbol;
+        this.typistAccuracy = typistAccuracy;
 
     }
 
