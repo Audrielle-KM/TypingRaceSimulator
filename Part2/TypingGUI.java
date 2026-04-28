@@ -29,7 +29,7 @@ public class TypingGUI
     private static ArrayList<JTextArea> typiststatus = new ArrayList<>();
 
     private static int numberOfTypists = 0;
-    private static Typist winnerTypist;
+    private static Typist2 winnerTypist;
 
     // Accuracy thresholds for mistype and burnout events
     private static final double MISTYPE_BASE_CHANCE = 0.3;
@@ -461,7 +461,7 @@ public class TypingGUI
      * @param theTypist the typist to check
      * @return true if their progress has reached or passed the passage length
      */
-    private boolean raceFinishedBy(Typist theTypist)
+    private static boolean raceFinishedBy(Typist2 theTypist)
     {
         if (theTypist.getProgress() >= passageLength) //(FIXED) progress can overshoot so set to '>='
         {
@@ -475,114 +475,106 @@ public class TypingGUI
     }
 
     /**
-     * Prints the current state of the race to the terminal.
+     * Displays the current state of the race to the GUI.
      * Shows each typist's position along the passage, burnout state,
      * and a WPM estimate based on current progress.
      */
     private static void printRace()
     {
-        System.out.print('\u000C'); // Clear terminal
 
-        System.out.println("  TYPING RACE — passage length: " + passageLength + " chars");
-        multiplePrint('=', passageLength + 3);
-        System.out.println();
+        /**try {
+                TimeUnit.MILLISECONDS.sleep(NEW_SPEED);
+            } catch (Exception e) {}*/
 
-        printSeat(seat1Typist);
-        System.out.println();
 
-        printSeat(seat2Typist);
-        System.out.println();
+        for (Typist2 typist : typists)
+        {
+            printSeat(typist);
 
-        printSeat(seat3Typist);
-        System.out.println();
-
-        multiplePrint('=', passageLength + 3);
-        System.out.println();
-        System.out.println("  [~] = burnt out    [<] = just mistyped");
+            raceFinishedBy(typist);
+            
+        }
     }
 
-    /**
-     * Prints a single typist's lane.
-     *
-     * Examples:
-     *   |          ⌨           | TURBOFINGERS (Accuracy: 0.85)
-     *   |    [zz]              | HUNT_N_PECK  (Accuracy: 0.40) BURNT OUT (2 turns)
-     *
-     * Note: Ty forgot to show when a typist has just mistyped. That would
-     * be a nice improvement — perhaps a [<] marker after their symbol.
-     *
-     * @param theTypist the typist whose lane to print
+     /**
+     * updating a single typist's lane
+     * @param theTypist
      */
-    private static void printSeat(Typist theTypist)
+    private static void printSeat(Typist2 theTypist)
     {
         int spacesBefore = theTypist.getProgress();
         int spacesAfter  = passageLength - theTypist.getProgress();
         String typistAccuracy = String.format("%.2f", theTypist.getAccuracy()); // for consistent formatting
 
-        System.out.print('|');
-        multiplePrint(' ', spacesBefore);
+        int index = typists.indexOf(theTypist);
+
+        JTextArea seat = bars.get(index);
+        JTextArea typistInfo = typiststatus.get(index);
+
+        String passage = "|";
+
+        passage += multiplePrint('◉', spacesBefore);
+        seat.setText(passage);
 
         // Always show the typist's symbol so they can be identified on screen.
-        // Append ~ when burnt out so the state is visible without hiding identity.
-        System.out.print(theTypist.getSymbol());
+        // Append ◌ when burnt out so the state is visible without hiding identity.
+        passage += theTypist.getSymbol();
+        seat.setText(passage);
         if (theTypist.isBurntOut())
         {
-            System.out.print('~');
-            spacesAfter--; // symbol + ~ together take two characters
+            passage += "◌";
+            seat.setText(passage);
+            spacesAfter--; // symbol + ◌ together take two characters
         }
 
         if (!theTypist.isBurntOut() && theTypist.getProgressBeforeSlideBack() > theTypist.getProgress()) {
-            spacesAfter -= 1; // symbol take 1 char
-            int gapsBetweenSymbol = theTypist.getProgressBeforeSlideBack() - theTypist.getProgress(); // distance from when slide back occured and current progress
-            
-            int gapsAfter = gapsBetweenSymbol + 2; // num chars covered when slide back occured + [<]
-            multiplePrint(' ', gapsBetweenSymbol);
-            
-            String s = "[";
-            if (gapsAfter > spacesAfter) // detects if '[<]' goes beyond finishline and fixes printing positioning
-            {
-                int distance = gapsAfter - spacesAfter;
-                if (distance < 2)
-                {
-                    s += "<";
-                    System.out.print(s);
-                }
-                else
-                {
-                    System.out.print(s);
-                }
-            }
-            else
-            {
-                s += "<]";
-                System.out.print(s);
-            }
-            spacesAfter -= gapsAfter;
+
+            seat.setText(passage);
+
+            String s = "◍";
+            passage += s;
+            seat.setText(passage);
+            spacesAfter--;
         }
 
-        multiplePrint(' ', spacesAfter);
-        System.out.print('|');
-        System.out.print(' ');
+        //If Energy Drink is enabled, first half increases accuracy then second half decreases it back to original
+        if (energyDrinkButton.getText().equals("ON"))
+        {
+            if (spacesAfter >= passageLength/2) // Second half decrease accuracy back
+            {
+                theTypist.setAccuracy(theTypist.getOldAccuracy());
+            }
+            else // First half increases accuracy slightly
+                theTypist.setAccuracy(theTypist.getAccuracy() + ENERGY_DRINK_ACCURACY);
+        }
 
-        // Print name and accuracy
+        passage += multiplePrint('○', spacesAfter);
+        passage += "⚑";
+        passage += " ";
+        seat.setText(passage);
+
+        //Print name and accuracy
+        String info = "";
         if (theTypist.isBurntOut()) // if burnt out
         {
 
-            System.out.print(theTypist.getName()
-                + " (Accuracy: " +typistAccuracy + ")"
-                + " BURNT OUT (" + theTypist.getBurnoutTurnsRemaining() + " turns)");
+            info = theTypist.getName()
+                + " (Accuracy: " + typistAccuracy + ")"
+                + " BURNT OUT (" + theTypist.getBurnoutTurnsRemaining() + " turns)";
         }
         else if (!theTypist.isBurntOut() && theTypist.getProgressBeforeSlideBack() > theTypist.getProgress()) // if mistypes
         {
-            System.out.print(theTypist.getName()
+            info = theTypist.getName()
                 + " (Accuracy: " + typistAccuracy + ")"
-                + "  ← just mistyped");
+                + "  ← just mistyped";
         }
         else // neither burnt out nor mistyped
         {
-            System.out.print(theTypist.getName()
-                + " (Accuracy: " + typistAccuracy + ")");
+           info = theTypist.getName()
+                + " (Accuracy: " + typistAccuracy + ")";
         }
+        typistInfo.setText(info);
+        
     }
 
     /**
