@@ -1490,12 +1490,7 @@ public class TypingGUI
 
     }
 
-    /**
-     * The main method that creates the GUI of the TypingRace
-     * Creates main menu and customisation page.
-     * Pages that user have to select options to set up the race
-     */
-
+    
     /**
      * The main method that creates the GUI of the TypingRace
      * Creates main menu and customisation page.
