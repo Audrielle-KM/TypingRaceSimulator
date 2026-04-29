@@ -344,6 +344,672 @@ public class TypingGUI {
         }
     }
 
+
+    /**
+     * Displays graphical version of TypingRace
+     * 
+     * Creates main menu and customisation page.
+     * Pages that user have to select options to set up the race
+     * 
+     */
+    public static void startRace()
+    {
+        JFrame frame = new JFrame("TypingRace");
+        layout = new CardLayout();
+        card = new JPanel(layout);
+
+        JLabel gameName = new JLabel("TYPING RACE");
+        gameName.setBounds(282, 5, 148, 29);
+        gameName.setFont(new Font("Arial", Font.BOLD, 20));
+        gameName.setForeground(Color.decode("#f3753f"));
+
+        frame.add(gameName, BorderLayout.NORTH);
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(667, 400);
+
+        //Main Menu
+        JPanel mainPanel = new JPanel();
+        mainPanel.setBackground(Color.decode("#eeeeee"));
+        mainPanel.setLayout(null);
+
+        JLabel mainMenuText = new JLabel("Main Menu");
+        mainMenuText.setBounds(303, 31, 106, 30);
+        mainMenuText.setFont(new Font("Arial", Font.ITALIC, 18));
+        mainMenuText.setForeground(Color.decode("#ff7146"));
+        mainPanel.add(mainMenuText);
+
+        JLabel selectPassageLengthText = new JLabel("Select Passage Length:");
+        selectPassageLengthText.setBounds(35, 71, 160, 21);
+        selectPassageLengthText.setFont(new Font("Arial", Font.PLAIN, 14));
+        selectPassageLengthText.setForeground(Color.decode("#1b1b1b"));
+        mainPanel.add(selectPassageLengthText);
+
+        String options[] = {"Short", "Medium", "Long", "Custom"};
+        lengthOption = new JComboBox<String>(options);
+        lengthOption.setBounds(35, 71, 160, 21);
+        lengthOption.setLocation(35,111);
+        mainPanel.add(lengthOption);
+
+        selectedLength = new JLabel(lengthOption.getSelectedItem().toString() + "🗸");
+        selectedLength.setBounds(201, 111, 106, 16);
+        selectedLength.setForeground(Color.decode("#1b1b1b"));
+        mainPanel.add(selectedLength);
+
+        JTextField customLengthTextField = new JTextField("(5-50)");
+        customLengthTextField.setBounds(90, 137, 94, 24);
+        customLengthTextField.setBackground(Color.decode("#ffffff"));
+        customLengthTextField.setForeground(Color.GRAY);
+        customLengthTextField.setVisible(false);
+        customLengthTextField.setEditable(false);
+        mainPanel.add(customLengthTextField);
+
+        customLengthTextField.addFocusListener(new FocusAdapter() { // sets Placeholder text
+            public void onFocus(FocusEvent e){
+                if (customLengthTextField.getText().equals("(5-50)"))
+                    {
+                        customLengthTextField.setText("");
+                        customLengthTextField.setText("");
+                        customLengthTextField.setForeground(Color.BLACK);
+                    }
+                }
+            public void outFocus(FocusEvent e){
+            if (customLengthTextField.getText().isEmpty())
+                {
+                    customLengthTextField.setText("(5-50)");
+                    customLengthTextField.setForeground(Color.GRAY);
+                }
+            }
+        });
+
+        JButton setLengthButton = new JButton("Set");
+        setLengthButton.setBounds(186, 142, 55, 29);
+        setLengthButton.setBackground(Color.decode("#ffffff"));
+        setLengthButton.setForeground(Color.decode("#1b1b1b"));
+        setLengthButton.setFocusPainted(false);
+        setLengthButton.setVisible(false);
+        mainPanel.add(setLengthButton);
+
+        lengthOption.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                selectedLength.setText(lengthOption.getSelectedItem().toString() + "🗸");
+
+                if (lengthOption.getSelectedItem().toString().equals("Custom"))
+                {
+                    customLengthTextField.setVisible(true);
+                    customLengthTextField.setEditable(true);
+                    setLengthButton.setVisible(true);
+                }
+                else
+                {
+                    customLengthTextField.setVisible(false);
+                    customLengthTextField.setEditable(false);
+                    setLengthButton.setVisible(false);
+                }
+            }
+        });
+        setLengthButton.addActionListener(e -> { 
+            try {
+                
+                setOnClickColour(setLengthButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+                passageLength = Integer.parseInt(customLengthTextField.getText().trim());
+                if (passageLength >= 5 && passageLength <= 50)
+                {
+                    setLengthButton.setText("🗸");
+
+                    javax.swing.Timer timer = new javax.swing.Timer(1000, ee -> {
+                    
+                        customLengthTextField.setEditable(true);
+                        setLengthButton.setText("Set");
+                    
+                    });
+                    timer.setRepeats(false);
+                    timer.start();
+                    customLengthTextField.setEditable(false);
+                }
+                else
+                {
+                    javax.swing.Timer timer = new javax.swing.Timer(1000, ee -> {
+                     
+                    customLengthTextField.setEditable(true);
+            
+                    });
+                    timer.setRepeats(false);
+                    timer.start();
+                    setLengthButton.setText("Set");
+                    customLengthTextField.setText("Between 5-50!");
+                    customLengthTextField.setEditable(false);
+                     
+                }
+
+            } catch (NumberFormatException error) {
+                
+                javax.swing.Timer timer = new javax.swing.Timer(1000, ee -> {
+                     
+                    customLengthTextField.setEditable(true);
+                    customLengthTextField.setText("(5-50");
+                    customLengthTextField.setForeground(Color.GRAY);
+
+                });
+
+                timer.setRepeats(false);
+                timer.start();
+                setLengthButton.setText("Set");
+                customLengthTextField.setText("Invalid number!");
+                customLengthTextField.setEditable(false);
+            }
+        });
+
+        JLabel seatCountText = new JLabel("Seat Count:");
+        seatCountText.setBounds(37, 179, 106, 18);
+        seatCountText.setFont(new Font("Arial", Font.PLAIN,  14));
+        seatCountText.setForeground(Color.decode("#1b1b1b"));
+        mainPanel.add(seatCountText);
+
+        Integer[] seats = {2,3,4,5,6};
+        seatsOption = new JComboBox<Integer>(seats);
+        seatsOption.setSelectedItem(2);
+        seatsOption.setBounds(35, 71, 100, 21);
+        seatsOption.setLocation(37,210);
+        mainPanel.add(seatsOption);
+
+        numberOfSeatsText = new JLabel(seatsOption.getSelectedItem().toString() + "🗸");
+        numberOfSeatsText.setBounds(150, 210, 106, 18);
+        numberOfSeatsText.setForeground(Color.decode("#1b1b1b"));
+        mainPanel.add(numberOfSeatsText);
+
+        seatsOption.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                numberOfSeatsText.setText(seatsOption.getSelectedItem().toString() + "🗸");
+                numberOfTypists = Integer.parseInt(seatsOption.getSelectedItem().toString());
+            }
+        });
+
+        //Difficulty Modifiers
+        JLabel difficultyModifiersText = new JLabel("Difficulty Modifiers");
+        difficultyModifiersText.setBounds(411, 68, 147, 21);
+        difficultyModifiersText.setFont(new Font("Arial", Font.BOLD,  14));
+        difficultyModifiersText.setForeground(Color.decode("#434343"));
+        mainPanel.add(difficultyModifiersText);
+
+        JLabel autocorrectText = new JLabel("Autocorrect:");
+        autocorrectText.setBounds(304, 97, 106, 18);
+        autocorrectText.setFont(new Font("Arial", Font.PLAIN,  14));
+        autocorrectText.setForeground(Color.decode("#1b1b1b"));
+        mainPanel.add(autocorrectText);
+
+        autocorrectButton = new JButton("OFF");
+        autocorrectButton.setBounds(401, 89, 60, 39);
+        autocorrectButton.setBackground(Color.decode("#dd3333"));
+        autocorrectButton.setForeground(Color.decode("#1b1b1b"));
+        autocorrectButton.setFont(new Font("Arial", Font.PLAIN,  10));
+        autocorrectButton.setFocusPainted(false);
+        mainPanel.add(autocorrectButton);
+
+        autocorrectButton.addActionListener(e -> {
+            if (autocorrectButton.getText().toString().equals("ON"))
+            {
+                autocorrectButton.setBackground(Color.decode("#dd3333"));
+                autocorrectButton.setText("OFF");
+                
+            }
+            else
+            {
+                autocorrectButton.setBackground(Color.decode("#33dd8a"));
+                autocorrectButton.setText("ON");
+            }
+        });
+
+        JLabel caffeineModeText = new JLabel("Caffeine Mode:");
+        caffeineModeText.setBounds(468, 94, 106, 18);
+        caffeineModeText.setFont(new Font("Arial", Font.PLAIN, 14));
+        caffeineModeText.setForeground(Color.decode("#1b1b1b"));
+        mainPanel.add(caffeineModeText);
+
+        caffeineButton = new JButton("OFF");
+        caffeineButton.setBounds(582, 84, 60, 39);
+        caffeineButton.setBackground(Color.decode("#dd3333"));
+        caffeineButton.setForeground(Color.decode("#1b1b1b"));
+        caffeineButton.setFont(new Font("Arial", Font.PLAIN,  10));
+        caffeineButton.setFocusPainted(false);
+        mainPanel.add(caffeineButton);
+
+        caffeineButton.addActionListener(e -> {
+            if (caffeineButton.getText().toString().equals("ON"))
+            {
+                caffeineButton.setText("OFF");
+                caffeineButton.setBackground(Color.decode("#dd3333"));
+            }
+            else
+            {
+                caffeineButton.setText("ON");
+                caffeineButton.setBackground(Color.decode("#33dd8a"));
+            }
+        });
+
+        JLabel nightShiftText = new JLabel("Night Shift:");
+        nightShiftText.setBounds(376, 133, 106, 18);
+        nightShiftText.setFont(new Font("Arial", Font.PLAIN, 14));
+        nightShiftText.setForeground(Color.decode("#1b1b1b"));
+        mainPanel.add(nightShiftText);
+
+        nightShiftButton = new JButton("OFF");
+        nightShiftButton.setBounds(482, 121, 60, 39);
+        nightShiftButton.setBackground(Color.decode("#dd3333"));
+        nightShiftButton.setForeground(Color.decode("#1b1b1b"));
+        nightShiftButton.setFont(new Font("Arial", Font.PLAIN, 10));
+        nightShiftButton.setFocusPainted(false);
+        mainPanel.add(nightShiftButton);
+        
+        nightShiftButton.addActionListener(e ->{
+            if (nightShiftButton.getText().toString().equals("ON"))
+            {
+                nightShiftButton.setText("OFF");
+                nightShiftButton.setBackground(Color.decode("#dd3333"));
+            }
+            else
+            {
+                nightShiftButton.setText("ON");
+                nightShiftButton.setBackground(Color.decode("#33dd8a"));
+            }
+        });
+
+        JTextArea autocorrectInfoText = new JTextArea("Autocorrect: When enabled, the slideBack amount is halved, simulating  modern phone keyboards. ");
+        autocorrectInfoText.setBounds(306, 160, 327, 56);
+        autocorrectInfoText.setFont(new Font("Arial", Font.PLAIN, 14));
+        autocorrectInfoText.setForeground(Color.decode("#1b1b1b"));
+        autocorrectInfoText.setLineWrap(true);
+        autocorrectInfoText.setWrapStyleWord(true);
+        autocorrectInfoText.setEditable(false);
+        mainPanel.add(autocorrectInfoText);
+
+        JTextArea caffieneInfoText = new JTextArea("Caffeine Mode: All typists gain a temporary speed boost for the first 10 turns,  followed by increased burnout risk.");
+        caffieneInfoText.setBounds(305, 220, 312, 55);
+        caffieneInfoText.setFont(new Font("Arial", Font.PLAIN, 14));
+        caffieneInfoText.setForeground(Color.decode("#1b1b1b"));
+        caffieneInfoText.setLineWrap(true);
+        caffieneInfoText.setWrapStyleWord(true);
+        caffieneInfoText.setEditable(false);
+        mainPanel.add(caffieneInfoText);
+
+        JTextArea nightShiftInfoText = new JTextArea("Night Shift: Accuracy ratings are slightly reduced across the board: everyone is tired. ");
+        nightShiftInfoText.setBounds(306, 274, 337, 38);
+        nightShiftInfoText.setFont(new Font("Arial", Font.PLAIN, 14));
+        nightShiftInfoText.setForeground(Color.decode("#1b1b1b"));
+        nightShiftInfoText.setLineWrap(true);
+        nightShiftInfoText.setWrapStyleWord(true);
+        nightShiftInfoText.setEditable(false);
+        mainPanel.add(nightShiftInfoText);
+
+        JButton continue1 = new JButton("Continue");
+        continue1.setBounds(86, 280, 106, 30);
+        continue1.setBackground(Color.decode("#ffffff"));
+        continue1.setForeground(Color.decode("#1b1b1b"));
+        continue1.setFont(new Font("Arial", Font.PLAIN, 14));
+        continue1.setFocusPainted(false);
+        mainPanel.add(continue1);
+
+        //Customisation
+        JPanel customisationPanel = new JPanel(layout);
+        customisationPanel.setBackground(Color.decode("#eeeeee"));
+        customisationPanel.setLayout(null);
+
+
+        JLabel customisationHeading = new JLabel("Customisation Menu");
+        customisationHeading.setBounds(250, 31, 300, 30);
+        customisationHeading.setFont(new Font("Arial", Font.ITALIC, 18));
+        customisationHeading.setForeground(Color.decode("#ff7146"));
+        customisationPanel.add(customisationHeading);
+
+        JLabel typingStyleText = new JLabel("Typing Style:");
+        typingStyleText.setBounds(16, 71, 106, 18);
+        typingStyleText.setFont(new Font("Arial", Font.PLAIN, 14));
+        typingStyleText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(typingStyleText);
+
+        String styles[] = {"Touch Typist", "Hunt & Peck", "Phone Thumbs", "Voice-to-Text"};
+        styleOption = new JComboBox<String>(styles);
+        styleOption.setBounds(20, 100, 140, 21);
+        customisationPanel.add(styleOption);
+
+        stylesInfo = new JTextArea("+ no change accuracy rating; " + "+" +  "0.05 burnout risk");
+        stylesInfo.setBounds(20, 124, 106, 18);
+        stylesInfo.setFont(new Font("Arial", Font.PLAIN, 8));
+        stylesInfo.setForeground(Color.decode("#2bc36b"));
+        stylesInfo.setLineWrap(true);
+        stylesInfo.setWrapStyleWord(true);
+        stylesInfo.setEditable(false);
+        customisationPanel.add(stylesInfo);
+
+        styleOption.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                if (styleOption.getSelectedItem().toString().equals("Touch Typist"))
+                {
+                    stylesInfo.setText("+ no change accuracy rating; " + "+0.05 burnout risk");
+                }
+                else if (styleOption.getSelectedItem().toString().equals("Hunt & Peck"))
+                {
+                    stylesInfo.setText("+" + "0.2" + " accuracy rating; " + "+0.06 burnout risk");
+                }
+                else if (styleOption.getSelectedItem().toString().equals("Phone Thumbs"))
+                {
+                    
+                    stylesInfo.setText("-" + "0.2" + " accuracy rating; " + "+0.02 burnout risk");
+                }
+                else
+                {
+                    
+                    stylesInfo.setText("+" + "0.5" + " accuracy rating; " + "+0.09 burnout risk");
+                }
+            }
+        });
+
+        JLabel keyboardTypeText = new JLabel("Keyboard Type:");
+        keyboardTypeText.setBounds(16, 150, 106, 18);
+        keyboardTypeText.setFont(new Font("Arial", Font.PLAIN, 14));
+        keyboardTypeText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(keyboardTypeText);
+
+        String keyboard[] = {"Mechanical", "Membrane", "Touchscreen", "Stenography"};
+        keyboardType = new JComboBox<String>(keyboard);
+        keyboardType.setBounds(20, 185, 112, 21);
+        customisationPanel.add(keyboardType);
+
+        keyboardInfo = new JTextArea("normal speed" + "; " + "+" + Math.round(MISTYPE_BASE_CHANCE * 100.0) / 100.0 +" mistype chance");
+        keyboardInfo.setBounds(16, 208, 106, 18);
+        keyboardInfo.setFont(new Font("Arial", Font.PLAIN, 8));
+        keyboardInfo.setForeground(Color.decode("#2bc36b"));
+        keyboardInfo.setLineWrap(true);
+        keyboardInfo.setWrapStyleWord(true);
+        keyboardInfo.setEditable(false);
+        customisationPanel.add(keyboardInfo);
+
+        keyboardType.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                int speedChange = 0;
+                double mistypeChance = 0;
+        
+
+                if (keyboardType.getSelectedItem().toString().equals("Mechanical"))
+                {
+                    keyboardInfo.setText( "normal speed" + "; " + "+" + Math.round(MISTYPE_BASE_CHANCE * 100.0) / 100.0 +" mistype chance");
+                }
+                else if (keyboardType.getSelectedItem().toString().equals("Membrane"))
+                {
+                    speedChange += 30;
+
+                    mistypeChance += 0.3;
+                    keyboardInfo.setText("-" + speedChange + "ms; " + "+" + Math.round((NEW_MISTYPE_CHANCE - mistypeChance)* 100.0) / 100.0 +" mistype chance");
+                }
+                else if (keyboardType.getSelectedItem().toString().equals("Touchscreen"))
+                {
+                    speedChange += 35;
+
+                    mistypeChance += 0.35;
+                    keyboardInfo.setText("+" + speedChange + "ms; " + "+" + Math.round((NEW_MISTYPE_CHANCE + mistypeChance)* 100.0) / 100.0 +" mistype chance");
+                }
+                else
+                {
+                    speedChange += 10;
+
+                    mistypeChance += 0.1;
+                    keyboardInfo.setText("-" + speedChange + "ms; " + "+" + Math.round((NEW_MISTYPE_CHANCE - mistypeChance)* 100.0) / 100.0 +" mistype chance");
+                }
+            }
+        });
+
+        JLabel typistSymbolText = new JLabel("Typists' Symbol:");
+        typistSymbolText.setBounds(197, 71, 106, 18);
+        typistSymbolText.setFont(new Font("Arial", Font.PLAIN, 14));
+        typistSymbolText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(typistSymbolText);
+
+        String symbols[] = {"①②③", "⑴⑵⑶", "⓵⓶⓷", "♠♢♣♡","♳♴♵","⚀⚁⚂"};
+        symbolOption = new JComboBox<String>(symbols);
+        symbolOption.setBounds(210, 100, 130, 21);
+        customisationPanel.add(symbolOption);
+
+        JLabel progressBarColour = new JLabel("Progress Bar Colour:");
+        progressBarColour.setBounds(197, 146, 141, 18);
+        progressBarColour.setFont(new Font("Arial", Font.PLAIN, 14));;
+        progressBarColour.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(progressBarColour);
+
+        JButton colourChangeButton = new JButton("Selected Colour: N/A");
+        colourChangeButton.setBounds(197, 180, 200, 30);
+        colourChangeButton.setBackground(Color.decode("#ffffff"));
+        colourChangeButton.setForeground(Color.decode("#1b1b1b"));
+        colourChangeButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        colourChangeButton.setFocusPainted(false);
+        customisationPanel.add(colourChangeButton);
+
+        colourChangeButton.addActionListener(e ->{
+            progressBarColourSet = JColorChooser.showDialog(null, "Pick a Colour", Color.WHITE);
+            setOnClickColour(colourChangeButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+            
+            if (progressBarColourSet != null)
+            {
+                colourChangeButton.setText("Selected Colour: " + getColourName(progressBarColourSet));
+            }
+        });
+
+        JLabel setTypistNameText = new JLabel("Set Typists Names:");
+        setTypistNameText.setBounds(197, 210, 141, 18);
+        setTypistNameText.setFont(new Font("Arial", Font.PLAIN, 14));;
+        setTypistNameText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(setTypistNameText);
+
+        JButton setNameButton = new JButton("Set");
+        setNameButton.setBounds(197, 230, 200, 30);
+        setNameButton.setBackground(Color.decode("#ffffff"));
+        setNameButton.setForeground(Color.decode("#1b1b1b"));
+        setNameButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        setNameButton.setFocusPainted(false);
+        customisationPanel.add(setNameButton);
+
+        setNameButton.addActionListener(e ->{
+            setOnClickColour(setNameButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+            changeTypistsNames();
+        });
+
+        //Accessories
+        JLabel accessoriesLabel = new JLabel("Accessories");
+        accessoriesLabel.setBounds(475, 50, 147, 21);
+        accessoriesLabel.setFont(new Font("Arial", Font.BOLD,  14));
+        accessoriesLabel.setForeground(Color.decode("#434343"));
+        customisationPanel.add(accessoriesLabel);
+
+        wristSupportButton = new JButton("OFF");
+        wristSupportButton.setBounds(536, 66, 106, 30);
+        wristSupportButton.setBackground(Color.decode("#eb3251"));
+        wristSupportButton.setForeground(Color.decode("#1b1b1b"));
+        wristSupportButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        wristSupportButton.setFocusPainted(false);
+        customisationPanel.add(wristSupportButton);
+
+        wristSupportButton.addActionListener(e -> {
+            if (wristSupportButton.getText().toString().equals("ON"))
+            {
+                wristSupportButton.setBackground(Color.decode("#dd3333"));
+                wristSupportButton.setText("OFF");
+                
+            }
+            else
+            {
+                wristSupportButton.setBackground(Color.decode("#33dd8a"));
+                wristSupportButton.setText("ON");
+            }
+        });
+
+        noiseCHButton = new JButton("OFF");
+        noiseCHButton.setBounds(535, 124, 106, 30);
+        noiseCHButton.setBackground(Color.decode("#eb3251"));
+        noiseCHButton.setForeground(Color.decode("#1b1b1b"));
+        noiseCHButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        noiseCHButton.setFocusPainted(false);
+        customisationPanel.add(noiseCHButton);
+
+        noiseCHButton.addActionListener(e -> {
+            if (noiseCHButton.getText().toString().equals("ON"))
+            {
+                noiseCHButton.setBackground(Color.decode("#dd3333"));
+                noiseCHButton.setText("OFF");
+                
+            }
+            else
+            {
+                noiseCHButton.setBackground(Color.decode("#33dd8a"));
+                noiseCHButton.setText("ON");
+            }
+        });
+
+        energyDrinkButton = new JButton("OFF");
+        energyDrinkButton.setBounds(535, 177, 106, 30);
+        energyDrinkButton.setBackground(Color.decode("#eb3251"));
+        energyDrinkButton.setForeground(Color.decode("#1b1b1b"));
+        energyDrinkButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        energyDrinkButton.setFocusPainted(false);
+        customisationPanel.add(energyDrinkButton);
+
+        energyDrinkButton.addActionListener(e -> {
+            if (energyDrinkButton.getText().toString().equals("ON"))
+            {
+                energyDrinkButton.setBackground(Color.decode("#dd3333"));
+                energyDrinkButton.setText("OFF");
+                
+            }
+            else
+            {
+                energyDrinkButton.setBackground(Color.decode("#33dd8a"));
+                energyDrinkButton.setText("ON");
+            }
+        });
+
+        JTextArea wristSupportInfoText = new JTextArea("Reduce burnout duration");
+        wristSupportInfoText.setBounds(539, 104, 106, 18);
+        wristSupportInfoText.setFont(new Font("Arial", Font.PLAIN, 8));
+        wristSupportInfoText.setForeground(Color.decode("#1b1b1b"));
+        wristSupportInfoText.setLineWrap(true);
+        wristSupportInfoText.setWrapStyleWord(true);
+        wristSupportInfoText.setEditable(false);
+        customisationPanel.add(wristSupportInfoText);
+
+        JTextArea energyDrinkInfoText = new JTextArea("Increase accuracy for the first half of the race, decrease it in the second half");
+        energyDrinkInfoText.setBounds(537, 211, 104, 39);
+        energyDrinkInfoText.setFont(new Font("Arial", Font.PLAIN, 8));
+        energyDrinkInfoText.setForeground(Color.decode("#1b1b1b"));
+        energyDrinkInfoText.setLineWrap(true);
+        energyDrinkInfoText.setWrapStyleWord(true);
+        energyDrinkInfoText.setEditable(false);
+        customisationPanel.add(energyDrinkInfoText);
+
+        JTextArea noiseCHInfoText = new JTextArea("Reduce the chance of a mistype");
+        noiseCHInfoText.setBounds(539, 156, 106, 18);
+        noiseCHInfoText.setFont(new Font("Arial", Font.PLAIN, 8));
+        noiseCHInfoText.setForeground(Color.decode("#1b1b1b"));
+        noiseCHInfoText.setLineWrap(true);
+        noiseCHInfoText.setWrapStyleWord(true);
+        noiseCHInfoText.setEditable(false);
+        customisationPanel.add(noiseCHInfoText);
+
+        JLabel wristSupportText = new JLabel("Wrist Support:");
+        wristSupportText.setBounds(416, 69, 106, 18);
+        wristSupportText.setFont(new Font("Arial", Font.PLAIN, 14));
+        wristSupportText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(wristSupportText);
+
+        JLabel noiseCText = new JLabel("Noise-Cancelling");
+        noiseCText.setBounds(416, 122, 130, 37);
+        noiseCText.setFont(new Font("Arial", Font.PLAIN, 14));;
+        noiseCText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(noiseCText);
+
+        JLabel noiseHText = new JLabel("Headphones:");
+        noiseHText.setBounds(416, 140, 130, 37);
+        noiseHText.setFont(new Font("Arial", Font.PLAIN, 14));;
+        noiseHText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(noiseHText);
+
+        JLabel energyDrinkText = new JLabel("Energy Drink:");
+        energyDrinkText.setBounds(416, 185, 106, 18);
+        energyDrinkText.setFont(new Font("Arial", Font.PLAIN, 14));
+        energyDrinkText.setForeground(Color.decode("#1b1b1b"));
+        customisationPanel.add(energyDrinkText);
+
+        JButton continue2 = new JButton("Start Race");
+        continue2.setBounds(86, 280, 106, 30);
+        continue2.setBackground(Color.decode("#ffffff"));
+        continue2.setForeground(Color.decode("#1b1b1b"));
+        continue2.setFont(new Font("Arial", Font.PLAIN, 14));
+        continue2.setFocusPainted(false);
+        customisationPanel.add(continue2);
+
+        JButton backButton = new JButton("Back");
+        backButton.setBounds(18, 280, 65, 30);
+        backButton.setBackground(Color.decode("#ffffff"));
+        backButton.setForeground(Color.decode("#1b1b1b"));
+        backButton.setFont(new Font("Arial", Font.PLAIN, 10));
+        backButton.setFocusPainted(false);
+        customisationPanel.add(backButton);
+        
+        //Race Display
+        JPanel racePanel = new JPanel(layout);
+        racePanel.setBackground(Color.decode("#eeeeee"));
+        racePanel.setLayout(new BoxLayout(racePanel, BoxLayout.Y_AXIS));
+        racePanel.setBorder(BorderFactory.createEmptyBorder(0,0,1,0));
+
+        card.add(mainPanel, "main");
+        card.add(customisationPanel,"customise");
+        card.add(racePanel, "race");
+
+
+        continue1.addActionListener(e ->{
+            setOnClickColour(continue1,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+            layout.show(card, "customise");
+
+            setPassageLength();
+
+            numberOfTypists = Integer.parseInt(seatsOption.getSelectedItem().toString());
+        
+            int unicode = getUnicodeSymbol();
+            addTypist(unicode);
+        });
+        continue2.addActionListener(e ->{
+            setOnClickColour(continue2,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+            confirmChoices();
+            racePanel.removeAll();
+            layout.show(card, "race");
+            racePanel.add(SymbolDetails());
+            racePanel.add(ModifiersDetails());
+            racePanel.add(AccessoriesDetails());
+            for (int i = 0; i < numberOfTypists; i++)
+            {
+                Typist2 theTypist = typists.get(i);
+                racePanel.add(createProgressBar(theTypist));
+            }
+
+            racePanel.revalidate();
+            racePanel.repaint();
+
+            Race();
+        });
+        backButton.addActionListener(e ->{
+            setOnClickColour(backButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
+            layout.show(card, "main");
+        });
+        
+        frame.add(card, BorderLayout.CENTER);
+        frame.setVisible(true);
+    }
+
     /**
      * Starts the typing race.
      * the simulation runs
@@ -353,7 +1019,7 @@ public class TypingGUI {
      * with increased burnout risk for first 10 turns
      * 
      */
-    public static void startRace()
+    public static void Race()
     {
         finished = false;
          for (Typist2 typist : typists)
@@ -1487,666 +2153,11 @@ public class TypingGUI {
     }
 
     /**
-     * The main method that creates the GUI of the TypingRace
-     * Creates main menu and customisation page.
-     * Pages that user have to select options to set up the race
+     * The main method calls startRace() to set up GUI
      */
     public static void main(String[] args)
     {
-        JFrame frame = new JFrame("TypingRace");
-        layout = new CardLayout();
-        card = new JPanel(layout);
-
-        JLabel gameName = new JLabel("TYPING RACE");
-        gameName.setBounds(282, 5, 148, 29);
-        gameName.setFont(new Font("Arial", Font.BOLD, 20));
-        gameName.setForeground(Color.decode("#f3753f"));
-
-        frame.add(gameName, BorderLayout.NORTH);
-
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(667, 400);
-
-        //Main Menu
-        JPanel mainPanel = new JPanel();
-        mainPanel.setBackground(Color.decode("#eeeeee"));
-        mainPanel.setLayout(null);
-
-        JLabel mainMenuText = new JLabel("Main Menu");
-        mainMenuText.setBounds(303, 31, 106, 30);
-        mainMenuText.setFont(new Font("Arial", Font.ITALIC, 18));
-        mainMenuText.setForeground(Color.decode("#ff7146"));
-        mainPanel.add(mainMenuText);
-
-        JLabel selectPassageLengthText = new JLabel("Select Passage Length:");
-        selectPassageLengthText.setBounds(35, 71, 160, 21);
-        selectPassageLengthText.setFont(new Font("Arial", Font.PLAIN, 14));
-        selectPassageLengthText.setForeground(Color.decode("#1b1b1b"));
-        mainPanel.add(selectPassageLengthText);
-
-        String options[] = {"Short", "Medium", "Long", "Custom"};
-        lengthOption = new JComboBox<String>(options);
-        lengthOption.setBounds(35, 71, 160, 21);
-        lengthOption.setLocation(35,111);
-        mainPanel.add(lengthOption);
-
-        selectedLength = new JLabel(lengthOption.getSelectedItem().toString() + "🗸");
-        selectedLength.setBounds(201, 111, 106, 16);
-        selectedLength.setForeground(Color.decode("#1b1b1b"));
-        mainPanel.add(selectedLength);
-
-        JTextField customLengthTextField = new JTextField("(5-50)");
-        customLengthTextField.setBounds(90, 137, 94, 24);
-        customLengthTextField.setBackground(Color.decode("#ffffff"));
-        customLengthTextField.setForeground(Color.GRAY);
-        customLengthTextField.setVisible(false);
-        customLengthTextField.setEditable(false);
-        mainPanel.add(customLengthTextField);
-
-        customLengthTextField.addFocusListener(new FocusAdapter() { // sets Placeholder text
-            public void onFocus(FocusEvent e){
-                if (customLengthTextField.getText().equals("(5-50)"))
-                    {
-                        customLengthTextField.setText("");
-                        customLengthTextField.setText("");
-                        customLengthTextField.setForeground(Color.BLACK);
-                    }
-                }
-            public void outFocus(FocusEvent e){
-            if (customLengthTextField.getText().isEmpty())
-                {
-                    customLengthTextField.setText("(5-50)");
-                    customLengthTextField.setForeground(Color.GRAY);
-                }
-            }
-        });
-
-        JButton setLengthButton = new JButton("Set");
-        setLengthButton.setBounds(186, 142, 55, 29);
-        setLengthButton.setBackground(Color.decode("#ffffff"));
-        setLengthButton.setForeground(Color.decode("#1b1b1b"));
-        setLengthButton.setFocusPainted(false);
-        setLengthButton.setVisible(false);
-        mainPanel.add(setLengthButton);
-
-        lengthOption.addActionListener(new ActionListener() 
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                selectedLength.setText(lengthOption.getSelectedItem().toString() + "🗸");
-
-                if (lengthOption.getSelectedItem().toString().equals("Custom"))
-                {
-                    customLengthTextField.setVisible(true);
-                    customLengthTextField.setEditable(true);
-                    setLengthButton.setVisible(true);
-                }
-                else
-                {
-                    customLengthTextField.setVisible(false);
-                    customLengthTextField.setEditable(false);
-                    setLengthButton.setVisible(false);
-                }
-            }
-        });
-        setLengthButton.addActionListener(e -> { 
-            try {
-                
-                setOnClickColour(setLengthButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
-                passageLength = Integer.parseInt(customLengthTextField.getText().trim());
-                if (passageLength >= 5 && passageLength <= 50)
-                {
-                    setLengthButton.setText("🗸");
-
-                    javax.swing.Timer timer = new javax.swing.Timer(1000, ee -> {
-                    
-                        customLengthTextField.setEditable(true);
-                        setLengthButton.setText("Set");
-                    
-                    });
-                    timer.setRepeats(false);
-                    timer.start();
-                    customLengthTextField.setEditable(false);
-                }
-                else
-                {
-                    javax.swing.Timer timer = new javax.swing.Timer(1000, ee -> {
-                     
-                    customLengthTextField.setEditable(true);
-            
-                    });
-                    timer.setRepeats(false);
-                    timer.start();
-                    setLengthButton.setText("Set");
-                    customLengthTextField.setText("Between 5-50!");
-                    customLengthTextField.setEditable(false);
-                     
-                }
-
-            } catch (NumberFormatException error) {
-                
-                javax.swing.Timer timer = new javax.swing.Timer(1000, ee -> {
-                     
-                    customLengthTextField.setEditable(true);
-                    customLengthTextField.setText("(5-50");
-                    customLengthTextField.setForeground(Color.GRAY);
-
-                });
-
-                timer.setRepeats(false);
-                timer.start();
-                setLengthButton.setText("Set");
-                customLengthTextField.setText("Invalid number!");
-                customLengthTextField.setEditable(false);
-            }
-        });
-
-        JLabel seatCountText = new JLabel("Seat Count:");
-        seatCountText.setBounds(37, 179, 106, 18);
-        seatCountText.setFont(new Font("Arial", Font.PLAIN,  14));
-        seatCountText.setForeground(Color.decode("#1b1b1b"));
-        mainPanel.add(seatCountText);
-
-        Integer[] seats = {2,3,4,5,6};
-        seatsOption = new JComboBox<Integer>(seats);
-        seatsOption.setSelectedItem(2);
-        seatsOption.setBounds(35, 71, 100, 21);
-        seatsOption.setLocation(37,210);
-        mainPanel.add(seatsOption);
-
-        numberOfSeatsText = new JLabel(seatsOption.getSelectedItem().toString() + "🗸");
-        numberOfSeatsText.setBounds(150, 210, 106, 18);
-        numberOfSeatsText.setForeground(Color.decode("#1b1b1b"));
-        mainPanel.add(numberOfSeatsText);
-
-        seatsOption.addActionListener(new ActionListener() 
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                numberOfSeatsText.setText(seatsOption.getSelectedItem().toString() + "🗸");
-                numberOfTypists = Integer.parseInt(seatsOption.getSelectedItem().toString());
-            }
-        });
-
-        //Difficulty Modifiers
-        JLabel difficultyModifiersText = new JLabel("Difficulty Modifiers");
-        difficultyModifiersText.setBounds(411, 68, 147, 21);
-        difficultyModifiersText.setFont(new Font("Arial", Font.BOLD,  14));
-        difficultyModifiersText.setForeground(Color.decode("#434343"));
-        mainPanel.add(difficultyModifiersText);
-
-        JLabel autocorrectText = new JLabel("Autocorrect:");
-        autocorrectText.setBounds(304, 97, 106, 18);
-        autocorrectText.setFont(new Font("Arial", Font.PLAIN,  14));
-        autocorrectText.setForeground(Color.decode("#1b1b1b"));
-        mainPanel.add(autocorrectText);
-
-        autocorrectButton = new JButton("OFF");
-        autocorrectButton.setBounds(401, 89, 60, 39);
-        autocorrectButton.setBackground(Color.decode("#dd3333"));
-        autocorrectButton.setForeground(Color.decode("#1b1b1b"));
-        autocorrectButton.setFont(new Font("Arial", Font.PLAIN,  10));
-        autocorrectButton.setFocusPainted(false);
-        mainPanel.add(autocorrectButton);
-
-        autocorrectButton.addActionListener(e -> {
-            if (autocorrectButton.getText().toString().equals("ON"))
-            {
-                autocorrectButton.setBackground(Color.decode("#dd3333"));
-                autocorrectButton.setText("OFF");
-                
-            }
-            else
-            {
-                autocorrectButton.setBackground(Color.decode("#33dd8a"));
-                autocorrectButton.setText("ON");
-            }
-        });
-
-        JLabel caffeineModeText = new JLabel("Caffeine Mode:");
-        caffeineModeText.setBounds(468, 94, 106, 18);
-        caffeineModeText.setFont(new Font("Arial", Font.PLAIN, 14));
-        caffeineModeText.setForeground(Color.decode("#1b1b1b"));
-        mainPanel.add(caffeineModeText);
-
-        caffeineButton = new JButton("OFF");
-        caffeineButton.setBounds(582, 84, 60, 39);
-        caffeineButton.setBackground(Color.decode("#dd3333"));
-        caffeineButton.setForeground(Color.decode("#1b1b1b"));
-        caffeineButton.setFont(new Font("Arial", Font.PLAIN,  10));
-        caffeineButton.setFocusPainted(false);
-        mainPanel.add(caffeineButton);
-
-        caffeineButton.addActionListener(e -> {
-            if (caffeineButton.getText().toString().equals("ON"))
-            {
-                caffeineButton.setText("OFF");
-                caffeineButton.setBackground(Color.decode("#dd3333"));
-            }
-            else
-            {
-                caffeineButton.setText("ON");
-                caffeineButton.setBackground(Color.decode("#33dd8a"));
-            }
-        });
-
-        JLabel nightShiftText = new JLabel("Night Shift:");
-        nightShiftText.setBounds(376, 133, 106, 18);
-        nightShiftText.setFont(new Font("Arial", Font.PLAIN, 14));
-        nightShiftText.setForeground(Color.decode("#1b1b1b"));
-        mainPanel.add(nightShiftText);
-
-        nightShiftButton = new JButton("OFF");
-        nightShiftButton.setBounds(482, 121, 60, 39);
-        nightShiftButton.setBackground(Color.decode("#dd3333"));
-        nightShiftButton.setForeground(Color.decode("#1b1b1b"));
-        nightShiftButton.setFont(new Font("Arial", Font.PLAIN, 10));
-        nightShiftButton.setFocusPainted(false);
-        mainPanel.add(nightShiftButton);
-        
-        nightShiftButton.addActionListener(e ->{
-            if (nightShiftButton.getText().toString().equals("ON"))
-            {
-                nightShiftButton.setText("OFF");
-                nightShiftButton.setBackground(Color.decode("#dd3333"));
-            }
-            else
-            {
-                nightShiftButton.setText("ON");
-                nightShiftButton.setBackground(Color.decode("#33dd8a"));
-            }
-        });
-
-        JTextArea autocorrectInfoText = new JTextArea("Autocorrect: When enabled, the slideBack amount is halved, simulating  modern phone keyboards. ");
-        autocorrectInfoText.setBounds(306, 160, 327, 56);
-        autocorrectInfoText.setFont(new Font("Arial", Font.PLAIN, 14));
-        autocorrectInfoText.setForeground(Color.decode("#1b1b1b"));
-        autocorrectInfoText.setLineWrap(true);
-        autocorrectInfoText.setWrapStyleWord(true);
-        autocorrectInfoText.setEditable(false);
-        mainPanel.add(autocorrectInfoText);
-
-        JTextArea caffieneInfoText = new JTextArea("Caffeine Mode: All typists gain a temporary speed boost for the first 10 turns,  followed by increased burnout risk.");
-        caffieneInfoText.setBounds(305, 220, 312, 55);
-        caffieneInfoText.setFont(new Font("Arial", Font.PLAIN, 14));
-        caffieneInfoText.setForeground(Color.decode("#1b1b1b"));
-        caffieneInfoText.setLineWrap(true);
-        caffieneInfoText.setWrapStyleWord(true);
-        caffieneInfoText.setEditable(false);
-        mainPanel.add(caffieneInfoText);
-
-        JTextArea nightShiftInfoText = new JTextArea("Night Shift: Accuracy ratings are slightly reduced across the board: everyone is tired. ");
-        nightShiftInfoText.setBounds(306, 274, 337, 38);
-        nightShiftInfoText.setFont(new Font("Arial", Font.PLAIN, 14));
-        nightShiftInfoText.setForeground(Color.decode("#1b1b1b"));
-        nightShiftInfoText.setLineWrap(true);
-        nightShiftInfoText.setWrapStyleWord(true);
-        nightShiftInfoText.setEditable(false);
-        mainPanel.add(nightShiftInfoText);
-
-        JButton continue1 = new JButton("Continue");
-        continue1.setBounds(86, 280, 106, 30);
-        continue1.setBackground(Color.decode("#ffffff"));
-        continue1.setForeground(Color.decode("#1b1b1b"));
-        continue1.setFont(new Font("Arial", Font.PLAIN, 14));
-        continue1.setFocusPainted(false);
-        mainPanel.add(continue1);
-
-        //Customisation
-        JPanel customisationPanel = new JPanel(layout);
-        customisationPanel.setBackground(Color.decode("#eeeeee"));
-        customisationPanel.setLayout(null);
-
-
-        JLabel customisationHeading = new JLabel("Customisation Menu");
-        customisationHeading.setBounds(250, 31, 300, 30);
-        customisationHeading.setFont(new Font("Arial", Font.ITALIC, 18));
-        customisationHeading.setForeground(Color.decode("#ff7146"));
-        customisationPanel.add(customisationHeading);
-
-        JLabel typingStyleText = new JLabel("Typing Style:");
-        typingStyleText.setBounds(16, 71, 106, 18);
-        typingStyleText.setFont(new Font("Arial", Font.PLAIN, 14));
-        typingStyleText.setForeground(Color.decode("#1b1b1b"));
-        customisationPanel.add(typingStyleText);
-
-        String styles[] = {"Touch Typist", "Hunt & Peck", "Phone Thumbs", "Voice-to-Text"};
-        styleOption = new JComboBox<String>(styles);
-        styleOption.setBounds(20, 100, 140, 21);
-        customisationPanel.add(styleOption);
-
-        stylesInfo = new JTextArea("+ no change accuracy rating; " + "+" +  "0.05 burnout risk");
-        stylesInfo.setBounds(20, 124, 106, 18);
-        stylesInfo.setFont(new Font("Arial", Font.PLAIN, 8));
-        stylesInfo.setForeground(Color.decode("#2bc36b"));
-        stylesInfo.setLineWrap(true);
-        stylesInfo.setWrapStyleWord(true);
-        stylesInfo.setEditable(false);
-        customisationPanel.add(stylesInfo);
-
-        styleOption.addActionListener(new ActionListener() 
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                if (styleOption.getSelectedItem().toString().equals("Touch Typist"))
-                {
-                    stylesInfo.setText("+ no change accuracy rating; " + "+0.05 burnout risk");
-                }
-                else if (styleOption.getSelectedItem().toString().equals("Hunt & Peck"))
-                {
-                    stylesInfo.setText("+" + "0.2" + " accuracy rating; " + "+0.06 burnout risk");
-                }
-                else if (styleOption.getSelectedItem().toString().equals("Phone Thumbs"))
-                {
-                    
-                    stylesInfo.setText("-" + "0.2" + " accuracy rating; " + "+0.02 burnout risk");
-                }
-                else
-                {
-                    
-                    stylesInfo.setText("+" + "0.5" + " accuracy rating; " + "+0.09 burnout risk");
-                }
-            }
-        });
-
-        JLabel keyboardTypeText = new JLabel("Keyboard Type:");
-        keyboardTypeText.setBounds(16, 150, 106, 18);
-        keyboardTypeText.setFont(new Font("Arial", Font.PLAIN, 14));
-        keyboardTypeText.setForeground(Color.decode("#1b1b1b"));
-        customisationPanel.add(keyboardTypeText);
-
-        String keyboard[] = {"Mechanical", "Membrane", "Touchscreen", "Stenography"};
-        keyboardType = new JComboBox<String>(keyboard);
-        keyboardType.setBounds(20, 185, 112, 21);
-        customisationPanel.add(keyboardType);
-
-        keyboardInfo = new JTextArea("normal speed" + "; " + "+" + Math.round(MISTYPE_BASE_CHANCE * 100.0) / 100.0 +" mistype chance");
-        keyboardInfo.setBounds(16, 208, 106, 18);
-        keyboardInfo.setFont(new Font("Arial", Font.PLAIN, 8));
-        keyboardInfo.setForeground(Color.decode("#2bc36b"));
-        keyboardInfo.setLineWrap(true);
-        keyboardInfo.setWrapStyleWord(true);
-        keyboardInfo.setEditable(false);
-        customisationPanel.add(keyboardInfo);
-
-        keyboardType.addActionListener(new ActionListener() 
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                int speedChange = 0;
-                double mistypeChance = 0;
-        
-
-                if (keyboardType.getSelectedItem().toString().equals("Mechanical"))
-                {
-                    keyboardInfo.setText( "normal speed" + "; " + "+" + Math.round(MISTYPE_BASE_CHANCE * 100.0) / 100.0 +" mistype chance");
-                }
-                else if (keyboardType.getSelectedItem().toString().equals("Membrane"))
-                {
-                    speedChange += 30;
-
-                    mistypeChance += 0.3;
-                    keyboardInfo.setText("-" + speedChange + "ms; " + "+" + Math.round((NEW_MISTYPE_CHANCE - mistypeChance)* 100.0) / 100.0 +" mistype chance");
-                }
-                else if (keyboardType.getSelectedItem().toString().equals("Touchscreen"))
-                {
-                    speedChange += 35;
-
-                    mistypeChance += 0.35;
-                    keyboardInfo.setText("+" + speedChange + "ms; " + "+" + Math.round((NEW_MISTYPE_CHANCE + mistypeChance)* 100.0) / 100.0 +" mistype chance");
-                }
-                else
-                {
-                    speedChange += 10;
-
-                    mistypeChance += 0.1;
-                    keyboardInfo.setText("-" + speedChange + "ms; " + "+" + Math.round((NEW_MISTYPE_CHANCE - mistypeChance)* 100.0) / 100.0 +" mistype chance");
-                }
-            }
-        });
-
-        JLabel typistSymbolText = new JLabel("Typists' Symbol:");
-        typistSymbolText.setBounds(197, 71, 106, 18);
-        typistSymbolText.setFont(new Font("Arial", Font.PLAIN, 14));
-        typistSymbolText.setForeground(Color.decode("#1b1b1b"));
-        customisationPanel.add(typistSymbolText);
-
-        String symbols[] = {"①②③", "⑴⑵⑶", "⓵⓶⓷", "♠♢♣♡","♳♴♵","⚀⚁⚂"};
-        symbolOption = new JComboBox<String>(symbols);
-        symbolOption.setBounds(210, 100, 130, 21);
-        customisationPanel.add(symbolOption);
-
-        JLabel progressBarColour = new JLabel("Progress Bar Colour:");
-        progressBarColour.setBounds(197, 146, 141, 18);
-        progressBarColour.setFont(new Font("Arial", Font.PLAIN, 14));;
-        progressBarColour.setForeground(Color.decode("#1b1b1b"));
-        customisationPanel.add(progressBarColour);
-
-        JButton colourChangeButton = new JButton("Selected Colour: N/A");
-        colourChangeButton.setBounds(197, 180, 200, 30);
-        colourChangeButton.setBackground(Color.decode("#ffffff"));
-        colourChangeButton.setForeground(Color.decode("#1b1b1b"));
-        colourChangeButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        colourChangeButton.setFocusPainted(false);
-        customisationPanel.add(colourChangeButton);
-
-        colourChangeButton.addActionListener(e ->{
-            progressBarColourSet = JColorChooser.showDialog(null, "Pick a Colour", Color.WHITE);
-            setOnClickColour(colourChangeButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
-            
-            if (progressBarColourSet != null)
-            {
-                colourChangeButton.setText("Selected Colour: " + getColourName(progressBarColourSet));
-            }
-        });
-
-        JLabel setTypistNameText = new JLabel("Set Typists Names:");
-        setTypistNameText.setBounds(197, 210, 141, 18);
-        setTypistNameText.setFont(new Font("Arial", Font.PLAIN, 14));;
-        setTypistNameText.setForeground(Color.decode("#1b1b1b"));
-        customisationPanel.add(setTypistNameText);
-
-        JButton setNameButton = new JButton("Set");
-        setNameButton.setBounds(197, 230, 200, 30);
-        setNameButton.setBackground(Color.decode("#ffffff"));
-        setNameButton.setForeground(Color.decode("#1b1b1b"));
-        setNameButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        setNameButton.setFocusPainted(false);
-        customisationPanel.add(setNameButton);
-
-        setNameButton.addActionListener(e ->{
-            setOnClickColour(setNameButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
-            changeTypistsNames();
-        });
-
-        //Accessories
-        JLabel accessoriesLabel = new JLabel("Accessories");
-        accessoriesLabel.setBounds(475, 50, 147, 21);
-        accessoriesLabel.setFont(new Font("Arial", Font.BOLD,  14));
-        accessoriesLabel.setForeground(Color.decode("#434343"));
-        customisationPanel.add(accessoriesLabel);
-
-        wristSupportButton = new JButton("OFF");
-        wristSupportButton.setBounds(536, 66, 106, 30);
-        wristSupportButton.setBackground(Color.decode("#eb3251"));
-        wristSupportButton.setForeground(Color.decode("#1b1b1b"));
-        wristSupportButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        wristSupportButton.setFocusPainted(false);
-        customisationPanel.add(wristSupportButton);
-
-        wristSupportButton.addActionListener(e -> {
-            if (wristSupportButton.getText().toString().equals("ON"))
-            {
-                wristSupportButton.setBackground(Color.decode("#dd3333"));
-                wristSupportButton.setText("OFF");
-                
-            }
-            else
-            {
-                wristSupportButton.setBackground(Color.decode("#33dd8a"));
-                wristSupportButton.setText("ON");
-            }
-        });
-
-        noiseCHButton = new JButton("OFF");
-        noiseCHButton.setBounds(535, 124, 106, 30);
-        noiseCHButton.setBackground(Color.decode("#eb3251"));
-        noiseCHButton.setForeground(Color.decode("#1b1b1b"));
-        noiseCHButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        noiseCHButton.setFocusPainted(false);
-        customisationPanel.add(noiseCHButton);
-
-        noiseCHButton.addActionListener(e -> {
-            if (noiseCHButton.getText().toString().equals("ON"))
-            {
-                noiseCHButton.setBackground(Color.decode("#dd3333"));
-                noiseCHButton.setText("OFF");
-                
-            }
-            else
-            {
-                noiseCHButton.setBackground(Color.decode("#33dd8a"));
-                noiseCHButton.setText("ON");
-            }
-        });
-
-        energyDrinkButton = new JButton("OFF");
-        energyDrinkButton.setBounds(535, 177, 106, 30);
-        energyDrinkButton.setBackground(Color.decode("#eb3251"));
-        energyDrinkButton.setForeground(Color.decode("#1b1b1b"));
-        energyDrinkButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        energyDrinkButton.setFocusPainted(false);
-        customisationPanel.add(energyDrinkButton);
-
-        energyDrinkButton.addActionListener(e -> {
-            if (energyDrinkButton.getText().toString().equals("ON"))
-            {
-                energyDrinkButton.setBackground(Color.decode("#dd3333"));
-                energyDrinkButton.setText("OFF");
-                
-            }
-            else
-            {
-                energyDrinkButton.setBackground(Color.decode("#33dd8a"));
-                energyDrinkButton.setText("ON");
-            }
-        });
-
-        JTextArea wristSupportInfoText = new JTextArea("Reduce burnout duration");
-        wristSupportInfoText.setBounds(539, 104, 106, 18);
-        wristSupportInfoText.setFont(new Font("Arial", Font.PLAIN, 8));
-        wristSupportInfoText.setForeground(Color.decode("#1b1b1b"));
-        wristSupportInfoText.setLineWrap(true);
-        wristSupportInfoText.setWrapStyleWord(true);
-        wristSupportInfoText.setEditable(false);
-        customisationPanel.add(wristSupportInfoText);
-
-        JTextArea energyDrinkInfoText = new JTextArea("Increase accuracy for the first half of the race, decrease it in the second half");
-        energyDrinkInfoText.setBounds(537, 211, 104, 39);
-        energyDrinkInfoText.setFont(new Font("Arial", Font.PLAIN, 8));
-        energyDrinkInfoText.setForeground(Color.decode("#1b1b1b"));
-        energyDrinkInfoText.setLineWrap(true);
-        energyDrinkInfoText.setWrapStyleWord(true);
-        energyDrinkInfoText.setEditable(false);
-        customisationPanel.add(energyDrinkInfoText);
-
-        JTextArea noiseCHInfoText = new JTextArea("Reduce the chance of a mistype");
-        noiseCHInfoText.setBounds(539, 156, 106, 18);
-        noiseCHInfoText.setFont(new Font("Arial", Font.PLAIN, 8));
-        noiseCHInfoText.setForeground(Color.decode("#1b1b1b"));
-        noiseCHInfoText.setLineWrap(true);
-        noiseCHInfoText.setWrapStyleWord(true);
-        noiseCHInfoText.setEditable(false);
-        customisationPanel.add(noiseCHInfoText);
-
-        JLabel wristSupportText = new JLabel("Wrist Support:");
-        wristSupportText.setBounds(416, 69, 106, 18);
-        wristSupportText.setFont(new Font("Arial", Font.PLAIN, 14));
-        wristSupportText.setForeground(Color.decode("#1b1b1b"));
-        customisationPanel.add(wristSupportText);
-
-        JLabel noiseCText = new JLabel("Noise-Cancelling");
-        noiseCText.setBounds(416, 122, 130, 37);
-        noiseCText.setFont(new Font("Arial", Font.PLAIN, 14));;
-        noiseCText.setForeground(Color.decode("#1b1b1b"));
-        customisationPanel.add(noiseCText);
-
-        JLabel noiseHText = new JLabel("Headphones:");
-        noiseHText.setBounds(416, 140, 130, 37);
-        noiseHText.setFont(new Font("Arial", Font.PLAIN, 14));;
-        noiseHText.setForeground(Color.decode("#1b1b1b"));
-        customisationPanel.add(noiseHText);
-
-        JLabel energyDrinkText = new JLabel("Energy Drink:");
-        energyDrinkText.setBounds(416, 185, 106, 18);
-        energyDrinkText.setFont(new Font("Arial", Font.PLAIN, 14));
-        energyDrinkText.setForeground(Color.decode("#1b1b1b"));
-        customisationPanel.add(energyDrinkText);
-
-        JButton continue2 = new JButton("Start Race");
-        continue2.setBounds(86, 280, 106, 30);
-        continue2.setBackground(Color.decode("#ffffff"));
-        continue2.setForeground(Color.decode("#1b1b1b"));
-        continue2.setFont(new Font("Arial", Font.PLAIN, 14));
-        continue2.setFocusPainted(false);
-        customisationPanel.add(continue2);
-
-        JButton backButton = new JButton("Back");
-        backButton.setBounds(18, 280, 65, 30);
-        backButton.setBackground(Color.decode("#ffffff"));
-        backButton.setForeground(Color.decode("#1b1b1b"));
-        backButton.setFont(new Font("Arial", Font.PLAIN, 10));
-        backButton.setFocusPainted(false);
-        customisationPanel.add(backButton);
-        
-        //Race Display
-        JPanel racePanel = new JPanel(layout);
-        racePanel.setBackground(Color.decode("#eeeeee"));
-        racePanel.setLayout(new BoxLayout(racePanel, BoxLayout.Y_AXIS));
-        racePanel.setBorder(BorderFactory.createEmptyBorder(0,0,1,0));
-
-        card.add(mainPanel, "main");
-        card.add(customisationPanel,"customise");
-        card.add(racePanel, "race");
-
-
-        continue1.addActionListener(e ->{
-            setOnClickColour(continue1,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
-            layout.show(card, "customise");
-
-            setPassageLength();
-
-            numberOfTypists = Integer.parseInt(seatsOption.getSelectedItem().toString());
-        
-            int unicode = getUnicodeSymbol();
-            addTypist(unicode);
-        });
-        continue2.addActionListener(e ->{
-            setOnClickColour(continue2,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
-            confirmChoices();
-            racePanel.removeAll();
-            layout.show(card, "race");
-            racePanel.add(SymbolDetails());
-            racePanel.add(ModifiersDetails());
-            racePanel.add(AccessoriesDetails());
-            for (int i = 0; i < numberOfTypists; i++)
-            {
-                Typist2 theTypist = typists.get(i);
-                racePanel.add(createProgressBar(theTypist));
-            }
-
-            racePanel.revalidate();
-            racePanel.repaint();
-
-            startRace();
-        });
-        backButton.addActionListener(e ->{
-            setOnClickColour(backButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
-            layout.show(card, "main");
-        });
-        
-        frame.add(card, BorderLayout.CENTER);
-        frame.setVisible(true);
+        startRace();
     }
 
 }
