@@ -944,7 +944,7 @@ public class TypingGUI {
                 scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
                 leaderboardPanel.add(scroll);
 
-                JTextArea badges = new JTextArea("⚡Speed Demon = 3 consecutive wins    ☝Iron Fingers = 5 races without a burnout     ☠Keyboard Smasher = 10 total wins       //       [Rank Awards: 3pts for 1st place, 2pts for 2nd place, 1pt for 3rd place; +1pt won best personal; -2pts if burnt out during race");
+                JTextArea badges = new JTextArea("⚡Speed Demon = 3 consecutive wins    ☝Iron Fingers = 5 races without a burnout     ☠Keyboard Smasher = 10 total wins             [Rank Awards:         +3pts = 1st place,         +2pts = 2nd place,        +1pt = 3rd place;         +1pt = new best personal;                 -2pts = burnt out during race]");
                 badges.setBounds(12, 66, 124, 225);
                 badges.setBackground(Color.decode("#B2B2B2"));
                 badges.setForeground(Color.decode("#656565"));
