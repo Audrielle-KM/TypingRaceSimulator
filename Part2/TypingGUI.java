@@ -352,7 +352,7 @@ public class TypingGUI {
      * Pages that user have to select options to set up the race
      * 
      */
-    public static void startRace()
+    public static void startRaceGUI()
     {
         JFrame frame = new JFrame("TypingRace");
         layout = new CardLayout();
@@ -2157,7 +2157,7 @@ public class TypingGUI {
      */
     public static void main(String[] args)
     {
-        startRace();
+        startRaceGUI();
     }
 
 }
