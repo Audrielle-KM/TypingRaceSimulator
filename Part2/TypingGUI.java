@@ -1,5 +1,3 @@
-import java.util.concurrent.TimeUnit;
-
 import java.lang.Math;
 import java.awt.*;
 import java.awt.event.*;
@@ -18,9 +16,8 @@ import javax.swing.*;
  * @author Audrielle Kaytlyn Myesha
  * @version 2
  */
-public class TypingGUI
-{
-     private static int passageLength;   // Total characters in the passage to type
+public class TypingGUI {
+    private static int passageLength;   // Total characters in the passage to type
 
     private static CardLayout layout; // Allows flipping through each page/section of GUI
     private static JPanel card;
@@ -513,7 +510,7 @@ public class TypingGUI
     }
 
     /**
-     * Prints the current state of the race to the GUI.
+     * Displays the current state of the race to the GUI.
      * Shows each typist's position along the passage, burnout state,
      * and a WPM estimate based on current progress.
      */
@@ -653,7 +650,7 @@ public class TypingGUI
     }
 
     /**
-     * Chaning the components(buttons) background when it's clicked
+     * Changing the components(buttons) background when it's clicked
      * 
      * @param button the modified button
      * @param onClickColour the colour when button is clicked
@@ -899,7 +896,7 @@ public class TypingGUI
 
                 JButton mainmenuButton = new JButton("Main Menu>>");
                 mainmenuButton.setBounds(500, 24, 106, 29);
-                mainmenuButton.setFont(new Font("Arial", Font.ITALIC,  14));
+                mainmenuButton.setFont(new Font("Arial", Font.ITALIC,  10));
                 mainmenuButton.setBackground(Color.decode("#2e2e2e"));
                 mainmenuButton.setForeground(Color.decode("#D9D9D9"));
                 mainmenuButton.setFocusPainted(false);
@@ -1480,7 +1477,6 @@ public class TypingGUI
             for (int i = 0; i < typists.size(); i++)
             {
                 Typist2 theTypist = typists.get(i);
-                //JTextArea bar = bars.get(i);
 
                 RaceHistory race = theTypist.getHistory().get(index);
                 
@@ -1490,13 +1486,13 @@ public class TypingGUI
 
     }
 
-    
     /**
      * The main method that creates the GUI of the TypingRace
      * Creates main menu and customisation page.
      * Pages that user have to select options to set up the race
      */
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         JFrame frame = new JFrame("TypingRace");
         layout = new CardLayout();
         card = new JPanel(layout);
@@ -1566,7 +1562,7 @@ public class TypingGUI
         });
 
         JButton setLengthButton = new JButton("Set");
-        setLengthButton.setBounds(186, 142, 47, 29);
+        setLengthButton.setBounds(186, 142, 55, 29);
         setLengthButton.setBackground(Color.decode("#ffffff"));
         setLengthButton.setForeground(Color.decode("#1b1b1b"));
         setLengthButton.setFocusPainted(false);
@@ -1671,6 +1667,8 @@ public class TypingGUI
                 numberOfTypists = Integer.parseInt(seatsOption.getSelectedItem().toString());
             }
         });
+
+        //Difficulty Modifiers
         JLabel difficultyModifiersText = new JLabel("Difficulty Modifiers");
         difficultyModifiersText.setBounds(411, 68, 147, 21);
         difficultyModifiersText.setFont(new Font("Arial", Font.BOLD,  14));
@@ -1684,10 +1682,10 @@ public class TypingGUI
         mainPanel.add(autocorrectText);
 
         autocorrectButton = new JButton("OFF");
-        autocorrectButton.setBounds(401, 89, 42, 39);
+        autocorrectButton.setBounds(401, 89, 60, 39);
         autocorrectButton.setBackground(Color.decode("#dd3333"));
         autocorrectButton.setForeground(Color.decode("#1b1b1b"));
-        autocorrectButton.setFont(new Font("Arial", Font.PLAIN,  14));
+        autocorrectButton.setFont(new Font("Arial", Font.PLAIN,  10));
         autocorrectButton.setFocusPainted(false);
         mainPanel.add(autocorrectButton);
 
@@ -1712,10 +1710,10 @@ public class TypingGUI
         mainPanel.add(caffeineModeText);
 
         caffeineButton = new JButton("OFF");
-        caffeineButton.setBounds(582, 84, 42, 39);
+        caffeineButton.setBounds(582, 84, 60, 39);
         caffeineButton.setBackground(Color.decode("#dd3333"));
         caffeineButton.setForeground(Color.decode("#1b1b1b"));
-        caffeineButton.setFont(new Font("Arial", Font.PLAIN,  14));
+        caffeineButton.setFont(new Font("Arial", Font.PLAIN,  10));
         caffeineButton.setFocusPainted(false);
         mainPanel.add(caffeineButton);
 
@@ -1739,10 +1737,10 @@ public class TypingGUI
         mainPanel.add(nightShiftText);
 
         nightShiftButton = new JButton("OFF");
-        nightShiftButton.setBounds(457, 121, 42, 39);
+        nightShiftButton.setBounds(482, 121, 60, 39);
         nightShiftButton.setBackground(Color.decode("#dd3333"));
         nightShiftButton.setForeground(Color.decode("#1b1b1b"));
-        nightShiftButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        nightShiftButton.setFont(new Font("Arial", Font.PLAIN, 10));
         nightShiftButton.setFocusPainted(false);
         mainPanel.add(nightShiftButton);
         
@@ -1942,7 +1940,7 @@ public class TypingGUI
             }
         });
 
-         JLabel setTypistNameText = new JLabel("Set Typists Names:");
+        JLabel setTypistNameText = new JLabel("Set Typists Names:");
         setTypistNameText.setBounds(197, 210, 141, 18);
         setTypistNameText.setFont(new Font("Arial", Font.PLAIN, 14));;
         setTypistNameText.setForeground(Color.decode("#1b1b1b"));
@@ -1960,7 +1958,8 @@ public class TypingGUI
             setOnClickColour(setNameButton,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
             changeTypistsNames();
         });
-        //Accessories (Customisation Section)
+
+        //Accessories
         JLabel accessoriesLabel = new JLabel("Accessories");
         accessoriesLabel.setBounds(475, 50, 147, 21);
         accessoriesLabel.setFont(new Font("Arial", Font.BOLD,  14));
@@ -2084,12 +2083,6 @@ public class TypingGUI
         energyDrinkText.setForeground(Color.decode("#1b1b1b"));
         customisationPanel.add(energyDrinkText);
 
-        //Race Display
-        JPanel racePanel = new JPanel(layout);
-        racePanel.setBackground(Color.decode("#eeeeee"));
-        racePanel.setLayout(new BoxLayout(racePanel, BoxLayout.Y_AXIS));
-        racePanel.setBorder(BorderFactory.createEmptyBorder(0,0,1,0));
-        
         JButton continue2 = new JButton("Start Race");
         continue2.setBounds(86, 280, 106, 30);
         continue2.setBackground(Color.decode("#ffffff"));
@@ -2099,16 +2092,23 @@ public class TypingGUI
         customisationPanel.add(continue2);
 
         JButton backButton = new JButton("Back");
-        backButton.setBounds(27, 280, 54, 30);
+        backButton.setBounds(18, 280, 65, 30);
         backButton.setBackground(Color.decode("#ffffff"));
         backButton.setForeground(Color.decode("#1b1b1b"));
-        backButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        backButton.setFont(new Font("Arial", Font.PLAIN, 10));
         backButton.setFocusPainted(false);
         customisationPanel.add(backButton);
+        
+        //Race Display
+        JPanel racePanel = new JPanel(layout);
+        racePanel.setBackground(Color.decode("#eeeeee"));
+        racePanel.setLayout(new BoxLayout(racePanel, BoxLayout.Y_AXIS));
+        racePanel.setBorder(BorderFactory.createEmptyBorder(0,0,1,0));
 
         card.add(mainPanel, "main");
         card.add(customisationPanel,"customise");
         card.add(racePanel, "race");
+
 
         continue1.addActionListener(e ->{
             setOnClickColour(continue1,Color.decode("#7a7a7a"), Color.decode("#ffffff"));
@@ -2148,4 +2148,5 @@ public class TypingGUI
         frame.add(card, BorderLayout.CENTER);
         frame.setVisible(true);
     }
+
 }
